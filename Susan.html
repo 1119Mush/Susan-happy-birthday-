@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎂 生日快樂！</title>
+    <!-- Google Fonts：可愛手寫體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <!-- canvas-confetti 彩帶特效 -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #5d4037;
+        }
+
+        /* 愛心飄落背景 */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4081;
+            opacity: 0.6;
+            font-size: 20px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 主要頁面區塊 */
+        #app {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 主頁動畫文字 */
+        #home .animated-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 3.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            min-height: 4rem;
+        }
+
+        .animated-text span {
+            display: inline-block;
+            opacity: 0;
+            animation: bounceIn 0.6s ease forwards;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(40px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) translateY(-10px);
+            }
+            70% {
+                transform: scale(0.9) translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* 個人檔案卡片 */
+        .profile-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid #f8bbd0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .profile-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: #d81b60;
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-info ul {
+            list-style: none;
+            font-size: 1.2rem;
+            line-height: 2;
+        }
+
+        .profile-info li::before {
+            content: "🌸 ";
+        }
+
+        /* 生日卡 */
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .birthday-card {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            transition: transform 1s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .birthday-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, #ff9a9e, #fad0c4);
+            color: white;
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+        }
+
+        .card-back {
+            background: white;
+            color: #4e342e;
+            transform: rotateY(180deg);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            line-height: 1.6;
+        }
+
+        .card-front p {
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 按鈕導航 */
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 28px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .home-btn {
+            background: #f8bbd0;
+            color: white;
+        }
+
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background: white;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .music-control.playing {
+            background: #f8bbd0;
+            color: white;
+        }
+
+        /* 返回按鈕（在子頁面內部） */
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: #d81b60;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* 手機適配 */
+        @media (max-width: 600px) {
+            #home .animated-text {
+                font-size: 2.2rem;
+            }
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 飄落愛心背景（JS 動態生成） -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- 主應用 -->
+    <div id="app">
+        <!-- 主頁：動態逐字彈出 -->
+        <div id="home" class="page active">
+            <div class="animated-text" id="animatedText"></div>
+        </div>
+
+        <!-- 副頁面1：個人檔案 -->
+        <div id="profile" class="page">
+            <div class="profile-card">
+                <!-- 照片：請更換為妳朋友的照片路徑 -->
+                <img src="friend-photo.jpg" alt="壽星照片" class="profile-photo" id="profilePic">
+                <div class="profile-info">
+                    <h2>🌸 親愛的小壽星</h2>
+                    <ul>
+                        <li><strong>名字：</strong>__朋友的名字__</li>
+                        <li><strong>生日：</strong>__月__日</li>
+                        <li><strong>星座：</strong>__星座__</li>
+                        <li><strong>喜歡的顏色：</strong>粉色、白色</li>
+                        <li><strong>興趣：</strong>旅行、甜點、追劇</li>
+                        <li><strong>一句話：</strong>永遠可愛，永遠被愛！</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="back-link" onclick="showPage('home')">← 回到主頁</div>
+        </div>
+
+        <!-- 副頁面2：翻轉生日卡 -->
+        <div id="card" class="page">
+            <div class="card-container" onclick="this.querySelector('.birthday-card').classList.toggle('flipped')">
+                <div class="birthday-card">
+                    <div class="card-front">
+                        <p>🎂</p>
+                        <p>打開卡片</p>
+                    </div>
+                    <div class="card-back">
+                        <p>親愛的朋友，</p>
+                        <p>願你的每一天都像今天一樣閃閃發光✨</p>
+                        <p>生日快樂！</p>
+                        <p>— 愛你的我 💖</p>
+                    </div>
+                </div>
+            </div>
+            <p style="color: #888; margin-top: 1rem;">（點擊卡片翻轉看祝福）</p>
+            <div class="back-link" onclick="showPage('home')">← 回到主頁</div>
+        </div>
+    </div>
+
+    <!-- 導航按鈕（禮物盒圖標） -->
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="showPage('profile')" title="個人檔案">🎁</button>
+        <button class="nav-btn" onclick="showPage('card')" title="生日卡">🎁</button>
+        <button class="nav-btn home-btn" onclick="showPage('home')" title="主頁">🏠</button>
+    </div>
+
+    <!-- 音樂控制（請將 birthday.mp3 放在同目錄下） -->
+    <div class="music-control" id="musicControl" onclick="toggleMusic()" title="播放/暫停音樂">🎵</div>
+    <audio id="bgMusic" loop>
+        <source src="birthday.mp3" type="audio/mpeg">
+        你的瀏覽器不支援音樂播放。
+    </audio>
+
+    <script>
+        // ---------- 愛心飄落 ----------
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartChars = ['❤️', '🌸', '✨', '💖', '🎀'];
+            for (let i = 0; i < 40; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'heart';
+                heart.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // ---------- 頁面切換 ----------
+        function showPage(pageId) {
+            // 隱藏所有頁面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // 顯示目標頁面
+            document.getElementById(pageId).classList.add('active');
+            // 如果回到主頁，重新播放文字動畫
+            if (pageId === 'home') {
+                startTextAnimation();
+            }
+        }
+
+        // ---------- 逐字彈出動畫 ----------
+        function startTextAnimation() {
+            const container = document.getElementById('animatedText');
+            // 可自訂祝福文字（請將「小可愛」換成朋友名字）
+            const message = "親愛的小可愛，生日快樂！";
+            container.innerHTML = '';
+            // 用 span 包住每個字
+            [...message].forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.animationDelay = (index * 0.12) + 's';
+                container.appendChild(span);
+            });
+            // 最後一個字出現後稍等一下放彩帶
+            const totalDuration = (message.length * 0.12 + 0.6) * 1000;
+            setTimeout(() => {
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }, totalDuration);
+        }
+
+        // 初次載入自動播放
+        window.addEventListener('load', () => {
+            startTextAnimation();
+        });
+
+        // ---------- 音樂控制 ----------
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicControl.classList.remove('playing');
+                musicControl.textContent = '🎵';
+            } else {
+                bgMusic.play().catch(e => console.log('音樂播放需用戶互動'));
+                musicControl.classList.add('playing');
+                musicControl.textContent = '🎶';
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        // 若想自動播放（可能被瀏覽器阻擋），嘗試在第一次點擊任何地方時播放
+        document.body.addEventListener('click', function initAudio() {
+            if (!musicPlaying) {
+                bgMusic.play().then(() => {
+                    musicPlaying = true;
+                    musicControl.classList.add('playing');
+                    musicControl.textContent = '🎶';
+                }).catch(() => {});
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
