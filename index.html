@@ -92,8 +92,8 @@
         .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 1rem 0; }
         .photo-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: pointer; transition: filter 0.2s; }
         .photo-grid img:hover { filter: brightness(0.95); }
-        /* Disqus 容器樣式 */
-        #disqus_thread { margin-top: 1rem; }
+        /* Cusdis 留言容器 */
+        #cusdis_thread { margin-top: 1rem; }
         .card-container { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; }
         .birthday-card { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
         .birthday-card.flipped { transform: rotateY(180deg); }
@@ -173,11 +173,18 @@
             </div>
         </div>
 
-        <!-- 祝福留言板（Disqus） -->
+        <!-- 祝福留言板（Cusdis，免登入） -->
         <div id="wishes" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
-                <div id="disqus_thread"></div>
+                <div id="cusdis_thread"
+                     data-host="https://cusdis.com"
+                     data-app-id="6553cb70-9b01-42d6-a6ac-7daa68ba38fb"
+                     data-page-id="susan-birthday"
+                     data-page-url="{{ PAGE_URL }}"
+                     data-page-title="Susan 的生日祝福牆">
+                </div>
+                <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
             </div>
         </div>
 
@@ -215,16 +222,12 @@
     </div>
 
     <script>
-        // ===== Disqus 設定 =====
-        var disqus_config = function () {
-            this.page.url = window.location.href;   // 使用當前網址
-            this.page.identifier = 'susan-birthday'; // 固定識別碼，確保不同網址也能找到同一留言板
-        };
+        // ===== 設定 Cusdis 動態參數（page-url 應設為目前頁面網址） =====
         (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://s-birthday.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
+            const thread = document.getElementById('cusdis_thread');
+            if (thread) {
+                thread.setAttribute('data-page-url', window.location.href);
+            }
         })();
 
         // ===== 密碼設定 =====
@@ -254,7 +257,7 @@
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') startTextAnimation();
             if (pageId === 'gallery') loadGallery();
-            // 切換到祝福頁面時，Disqus 會自動載入，不需額外動作
+            // Cusdis 會自動載入，不需額外處理
         }
 
         // ===== 逐字動畫 =====
@@ -309,7 +312,6 @@
             }
         }
 
-        // 點擊彈窗外部關閉
         document.getElementById('passwordModal').addEventListener('click', function(e) {
             if (e.target === this) this.style.display = 'none';
         });
@@ -331,7 +333,6 @@
             }
             musicPlaying = !musicPlaying;
         }
-        // 首次點擊頁面任意處可啟動音樂（因瀏覽器政策）
         document.body.addEventListener('click', function initAudio() {
             if (!musicPlaying) {
                 bgMusic.play().then(() => {
