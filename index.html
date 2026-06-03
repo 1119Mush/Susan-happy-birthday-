@@ -42,7 +42,6 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* 頂部導航：手機橫向滾動 */
         .top-bar {
             position: fixed; top: 0; left: 0; width: 100%; height: var(--topbar-height);
             background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
@@ -152,7 +151,6 @@
         .photo-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: pointer; transition: filter 0.2s; }
         .photo-grid img:hover { filter: brightness(0.95); }
 
-        /* 外部瀏覽器提示 */
         .wechat-notice {
             background: #fff3f3;
             border: 1px solid #ffcdd2;
@@ -165,10 +163,11 @@
         }
         .wechat-notice i { margin-right: 4px; }
 
-        /* 留言板容器 – 適中高度 */
+        /* 留言板容器高度 */
         #cusdis_thread {
-            min-height: 380px;       /* 桌面端顯示更多評論 */
+            min-height: 380px;
             width: 100%;
+            position: relative;
         }
 
         .card-container { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; }
@@ -183,16 +182,13 @@
         @media (max-width: 500px) {
             .top-bar .site-title { font-size: 1rem; }
             #home .animated-text { font-size: 2.2rem; }
-            #cusdis_thread {
-                min-height: 280px;   /* 手機端稍微降低，避免佔太多空間 */
-            }
+            #cusdis_thread { min-height: 280px; }
         }
     </style>
 </head>
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
 
-    <!-- 頂部導航 -->
     <header class="top-bar">
         <div class="site-title">🌸 Susan's Day</div>
         <nav class="nav-stories">
@@ -223,13 +219,11 @@
     <audio id="bgMusic" loop><source src="birthday.mp3" type="audio/mpeg"></audio>
 
     <div id="app">
-        <!-- 主頁 -->
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
             <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
         </div>
 
-        <!-- 個人檔案 -->
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
                 <img src="friend-photo.jpg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
@@ -244,7 +238,6 @@
             </div>
         </div>
 
-        <!-- 回憶照片牆 -->
         <div id="gallery" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500; margin-bottom: 1rem;">📸 我們的回憶</h3>
@@ -252,15 +245,12 @@
             </div>
         </div>
 
-        <!-- 祝福留言板（Cusdis + WeChat 提示） -->
         <div id="wishes" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
-                <!-- WeChat 使用者提示 -->
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
-                <!-- Cusdis 容器 -->
                 <div id="cusdis_thread"
                      data-host="https://cusdis.com"
                      data-app-id="6553cb70-9b01-42d6-a6ac-7daa68ba38fb"
@@ -270,7 +260,6 @@
             </div>
         </div>
 
-        <!-- 秘密生日卡 -->
         <div id="card" class="page">
             <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
                 <div class="card-container" onclick="flipCard()">
@@ -293,7 +282,6 @@
         </div>
     </div>
 
-    <!-- 密碼彈窗 -->
     <div class="modal-overlay" id="passwordModal" style="display: none;">
         <div class="modal">
             <h3>🔐 輸入密碼打開卡片</h3>
@@ -303,17 +291,89 @@
         </div>
     </div>
 
-    <!-- Cusdis 腳本 -->
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
         // 動態填入當前網址
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
-        // 密碼設定
+        // ========== 自動調整 Cusdis iframe 高度 ==========
+        function adjustCusdisHeight() {
+            const thread = document.getElementById('cusdis_thread');
+            if (!thread) return;
+            const iframe = thread.querySelector('iframe');
+            if (iframe) {
+                // 讓 iframe 高度等於父容器高度
+                iframe.style.height = '100%';
+                // 有時候用明確像素值更穩定
+                const containerHeight = thread.clientHeight;
+                if (containerHeight > 0) {
+                    iframe.style.height = containerHeight + 'px';
+                }
+            }
+        }
+
+        // MutationObserver 監聽 iframe 的出現（Cusdis 動態載入）
+        const cusdisObserver = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.addedNodes.length > 0) {
+                    const iframe = document.getElementById('cusdis_thread')?.querySelector('iframe');
+                    if (iframe) {
+                        adjustCusdisHeight();
+                        // 再等一下子，確保內容繪製完成
+                        setTimeout(adjustCusdisHeight, 300);
+                        setTimeout(adjustCusdisHeight, 1000);
+                        // 停止觀察，避免重複觸發
+                        cusdisObserver.disconnect();
+                        return;
+                    }
+                }
+            }
+        });
+
+        // 開始觀察 cusdis_thread 的子節點變化
+        function startObservingCusdis() {
+            const thread = document.getElementById('cusdis_thread');
+            if (thread) {
+                cusdisObserver.observe(thread, { childList: true, subtree: true });
+            }
+        }
+
+        // 頁面載入後啟動觀察
+        window.addEventListener('load', () => {
+            startObservingCusdis();
+            // 雙重保險：切換到祝福頁面時再次嘗試調整
+            adjustCusdisHeight();
+            setTimeout(adjustCusdisHeight, 500);
+            setTimeout(adjustCusdisHeight, 1500);
+        });
+
+        // 每次切換到祝福頁面時也觸發調整
+        function onWishesPageActive() {
+            // 重新啟動觀察（若之前已觸發 disconnect，需要重來）
+            const thread = document.getElementById('cusdis_thread');
+            if (thread && !thread.querySelector('iframe')) {
+                startObservingCusdis();
+            }
+            // 立即嘗試調整
+            adjustCusdisHeight();
+            setTimeout(adjustCusdisHeight, 300);
+            setTimeout(adjustCusdisHeight, 1000);
+        }
+
+        // 原來的 showPage 中加入對 wishes 的處理
+        const originalShowPage = showPage;
+        showPage = function(pageId) {
+            originalShowPage(pageId);
+            if (pageId === 'wishes') {
+                onWishesPageActive();
+            }
+        };
+
+        // ===== 密碼設定 =====
         const correctPassword = "201076";
         let passwordVerified = false;
 
-        // 愛心飄落
+        // ===== 愛心飄落 =====
         function createHearts() {
             const container = document.getElementById('heartsContainer');
             const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
@@ -330,15 +390,16 @@
         }
         createHearts();
 
-        // 頁面切換
+        // ===== 頁面切換 =====
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') startTextAnimation();
             if (pageId === 'gallery') loadGallery();
+            // wishes 的處理已在上方覆蓋
         }
 
-        // 逐字動畫
+        // ===== 逐字動畫 =====
         function startTextAnimation() {
             const container = document.getElementById('animatedText');
             const message = "Susan, Happy Birthday!";
@@ -355,7 +416,7 @@
             }, totalDuration);
         }
 
-        // 照片牆
+        // ===== 照片牆 =====
         function loadGallery() {
             const grid = document.getElementById('photoGrid');
             if (grid.children.length > 0) return;
@@ -368,7 +429,7 @@
             });
         }
 
-        // 生日卡密碼
+        // ===== 生日卡密碼 =====
         function showCardWithPassword() {
             if (passwordVerified) {
                 showPage('card');
@@ -398,7 +459,7 @@
             document.getElementById('birthdayCard').classList.toggle('flipped');
         }
 
-        // 音樂控制
+        // ===== 音樂控制 =====
         const bgMusic = document.getElementById('bgMusic');
         let musicPlaying = false;
         function toggleMusic() {
@@ -420,9 +481,13 @@
             }
         }, { once: true });
 
-        // 初始化
+        // ===== 初始化 =====
         window.addEventListener('load', () => {
             startTextAnimation();
+            // 若一開始就在祝福頁（極少數情況），手動呼叫
+            if (document.getElementById('wishes').classList.contains('active')) {
+                onWishesPageActive();
+            }
         });
     </script>
 </body>
