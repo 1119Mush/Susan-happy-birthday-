@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎂 生日快樂 | ins風格</title>
+    <title>🎂Susan 生日快樂 </title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 使用 Font Awesome 6 穩定版，避免 beta 版缺圖 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         :root {
@@ -100,7 +101,7 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         .nav-stories .story-label {
             font-size: 0.6rem;
@@ -186,7 +187,7 @@
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
 
-    <!-- 頂部導航（小兔子圖標 🐇） -->
+    <!-- 頂部導航（星星圖標 ✦） -->
     <header class="top-bar">
         <div class="site-title">🌸 Susan's Day</div>
         <nav class="nav-stories">
@@ -195,11 +196,11 @@
                 <span class="story-label">主頁</span>
             </div>
             <div class="story-item" onclick="showPage('profile')">
-                <div class="story-ring"><i class="fas fa-rabbit"></i></div>   <!-- 小兔子圖標 -->
+                <div class="story-ring"><i class="fas fa-star"></i></div>   <!-- 星星圖標 -->
                 <span class="story-label">檔案</span>
             </div>
             <div class="story-item" onclick="showPage('gallery')">
-                <div class="story-ring"><i class="fas fa-camera"></i></div>   <!-- 相機圖標 -->
+                <div class="story-ring"><i class="fas fa-camera"></i></div>
                 <span class="story-label">回憶</span>
             </div>
             <div class="story-item" onclick="showPage('wishes')">
@@ -228,10 +229,10 @@
                 <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">Susan</h2>
                 <div style="color: var(--secondary-text); line-height: 1.8;">
                     <p><strong>名字：</strong>Susan</p>
-                    <p><strong>生日：</strong>10月7日</p>
-                    <p><strong>星座：</strong>天秤座</p>
-                    <p><strong>興趣：</strong>旅行、甜點、追劇</p>
-                    <p style="margin-top:1rem;">「永遠可愛，永遠被愛！」</p>
+                    <p><strong>生日：</strong>7月6日</p>
+                    <p><strong>星座：</strong>巨蟹座</p>
+                    <p><strong>興趣：</strong>待輸入</p>
+                    <p style="margin-top:1rem;">「願妳青春燦爛,未來無憂」</p>
                 </div>
             </div>
         </div>
@@ -245,7 +246,7 @@
 
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
+                <h3 style="font-weight: 500;">💌 給壽星的祝福（下滑查看留言）</h3>
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
