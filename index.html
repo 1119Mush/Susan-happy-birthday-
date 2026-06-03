@@ -3,38 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎂 生日快樂！</title>
-    <!-- Google Fonts：可愛手寫體 -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <title>🎂 生日快樂 | ins風格</title>
+    <!-- Google Fonts: Instagram 常用字體 + 手寫體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- canvas-confetti 彩帶特效 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #262626;
+            --secondary-text: #8e8e8e;
+            --accent: #d81b60;
+            --accent-light: #f8bbd0;
+            --border: #dbdbdb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --ins-radius: 12px;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            color: #5d4037;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* 愛心飄落背景 */
         .hearts-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 0;
         }
-
         .heart {
             position: absolute;
             color: #ff4081;
@@ -42,160 +51,286 @@
             font-size: 20px;
             animation: fall linear infinite;
         }
-
         @keyframes fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* 主要頁面區塊 */
+        /* 主容器 */
         #app {
             position: relative;
             z-index: 1;
-            max-width: 800px;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 2rem 1rem 4rem;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .page {
             display: none;
             width: 100%;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+            animation: fadeIn 0.5s ease;
         }
-
         .page.active {
             display: block;
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- INS 風格卡片 ---------- */
+        .ins-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--ins-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .ins-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         /* 主頁動畫文字 */
         #home .animated-text {
             font-family: 'Pacifico', cursive;
-            font-size: 3.5rem;
-            color: #fff;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            font-size: 2.8rem;
+            color: var(--accent);
+            text-align: center;
             line-height: 1.4;
             min-height: 4rem;
+            margin-bottom: 2rem;
         }
-
         .animated-text span {
             display: inline-block;
             opacity: 0;
             animation: bounceIn 0.6s ease forwards;
         }
-
         @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3) translateY(40px);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1) translateY(-10px);
-            }
-            70% {
-                transform: scale(0.9) translateY(5px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            0% { opacity: 0; transform: scale(0.3) translateY(40px); }
+            50% { opacity: 1; transform: scale(1.1) translateY(-10px); }
+            70% { transform: scale(0.9) translateY(5px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 個人檔案卡片 */
-        .profile-card {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        /* 限時動態圓圈導航 */
+        .story-row {
             display: flex;
+            gap: 18px;
+            justify-content: center;
             flex-wrap: wrap;
-            align-items: center;
-            gap: 2rem;
-            max-width: 600px;
-            margin: 0 auto;
+            margin: 1.5rem 0;
         }
-
-        .profile-photo {
-            width: 180px;
-            height: 180px;
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .story-item:hover {
+            transform: scale(1.05);
+        }
+        .story-ring {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .story-ring img {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid #f8bbd0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 3px solid white;
+            background: white;
+        }
+        .story-label {
+            font-size: 0.8rem;
+            margin-top: 6px;
+            color: var(--text);
+            font-weight: 500;
+            max-width: 80px;
+            text-align: center;
         }
 
-        .profile-info {
-            text-align: left;
+        /* 按鈕 */
+        .ins-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-block;
+        }
+        .ins-btn:active { transform: scale(0.96); }
+        .ins-btn.secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        /* 密碼彈窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            backdrop-filter: blur(4px);
+        }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin: 1rem 0;
+            outline: none;
+        }
+        .modal input:focus {
+            border-color: var(--accent);
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* 照片牆 */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 1rem 0;
+        }
+        .photo-grid img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        .photo-grid img:hover {
+            filter: brightness(0.9);
+        }
+
+        /* 留言區 */
+        .comments {
+            margin-top: 1.5rem;
+        }
+        .comment-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .comment-input input {
             flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9rem;
         }
-
-        .profile-info h2 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.8rem;
-            color: #d81b60;
-            margin-bottom: 0.8rem;
-        }
-
-        .profile-info ul {
+        .comment-list {
             list-style: none;
-            font-size: 1.2rem;
-            line-height: 2;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        .comment-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .comment-list .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
         }
 
-        .profile-info li::before {
-            content: "🌸 ";
+        /* 響應式 */
+        @media (max-width: 480px) {
+            #home .animated-text { font-size: 2rem; }
+            .story-ring { width: 65px; height: 65px; }
         }
 
-        /* 生日卡 */
+        /* 音樂按鈕 */
+        .music-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            z-index: 15;
+            font-size: 1.4rem;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        /* 卡片翻轉效果 */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
+            height: 350px;
+            cursor: pointer;
         }
-
         .birthday-card {
             position: relative;
             width: 100%;
-            height: 350px;
-            transition: transform 1s;
+            height: 100%;
+            transition: transform 0.8s;
             transform-style: preserve-3d;
-            cursor: pointer;
         }
-
         .birthday-card.flipped {
             transform: rotateY(180deg);
         }
-
         .card-front, .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 25px;
+            border-radius: 24px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
@@ -203,183 +338,149 @@
             justify-content: center;
             padding: 2rem;
         }
-
         .card-front {
             background: linear-gradient(145deg, #ff9a9e, #fad0c4);
-            color: white;
-            font-family: 'Pacifico', cursive;
-            font-size: 2.5rem;
         }
-
         .card-back {
             background: white;
-            color: #4e342e;
             transform: rotateY(180deg);
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.8rem;
-            line-height: 1.6;
-        }
-
-        .card-front p {
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        /* 按鈕導航 */
-        .nav-buttons {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-btn {
-            background: white;
-            border: none;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            font-size: 28px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        .nav-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-
-        .home-btn {
-            background: #f8bbd0;
-            color: white;
-        }
-
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 10;
-            background: white;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .music-control.playing {
-            background: #f8bbd0;
-            color: white;
-        }
-
-        /* 返回按鈕（在子頁面內部） */
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            color: #d81b60;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* 手機適配 */
-        @media (max-width: 600px) {
-            #home .animated-text {
-                font-size: 2.2rem;
-            }
-            .profile-card {
-                flex-direction: column;
-                text-align: center;
-            }
-            .profile-info {
-                text-align: center;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- 飄落愛心背景（JS 動態生成） -->
+    <!-- 愛心飄落 -->
     <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- 音樂控制 -->
+    <div class="music-float" id="musicControl" onclick="toggleMusic()" title="生日歌">🎵</div>
+    <audio id="bgMusic" loop>
+        <source src="birthday.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- 主應用 -->
     <div id="app">
-        <!-- 主頁：動態逐字彈出 -->
+        <!-- 主頁 -->
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
+
+            <!-- 限時動態風格導航 -->
+            <div class="story-row">
+                <div class="story-item" onclick="showPage('profile')">
+                    <div class="story-ring">
+                        <img src="friend-photo.jpg" alt="壽星">
+                    </div>
+                    <span class="story-label">個人檔案</span>
+                </div>
+                <div class="story-item" onclick="showPage('gallery')">
+                    <div class="story-ring">
+                        <img src="gallery-thumb.jpg" alt="回憶">
+                    </div>
+                    <span class="story-label">回憶牆</span>
+                </div>
+                <div class="story-item" onclick="showPage('wishes')">
+                    <div class="story-ring">
+                        <i class="fas fa-heart" style="font-size: 2rem; color: white; background: linear-gradient(45deg, #f09433, #e6683c); width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;"></i>
+                    </div>
+                    <span class="story-label">祝福留言</span>
+                </div>
+                <div class="story-item" onclick="showCardWithPassword()">
+                    <div class="story-ring">
+                        <i class="fas fa-gift" style="font-size: 2rem; color: white; background: linear-gradient(45deg, #dc2743, #cc2366); width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;"></i>
+                    </div>
+                    <span class="story-label">秘密卡片</span>
+                </div>
+            </div>
+
+            <!-- 倒數計時（距離今天結束） -->
+            <div class="ins-card" style="text-align:center;">
+                <p style="color: var(--secondary-text); font-size: 0.9rem;">⏳ 生日還剩</p>
+                <div style="font-size: 2rem; font-weight: 600; color: var(--accent);" id="countdown"></div>
+            </div>
+
+            <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center;">點擊上方圓圈探索更多 🎀</p>
         </div>
 
-        <!-- 副頁面1：個人檔案 -->
+        <!-- 個人檔案頁面（已移除返回按鈕） -->
         <div id="profile" class="page">
-            <div class="profile-card">
-                <!-- 照片：請更換為妳朋友的照片路徑 -->
-                <img src="friend-photo.jpg" alt="壽星照片" class="profile-photo" id="profilePic">
-                <div class="profile-info">
-                    <h2>🌸 親愛的小壽星</h2>
-                    <ul>
-                        <li><strong>名字：</strong>__朋友的名字__</li>
-                        <li><strong>生日：</strong>__月__日</li>
-                        <li><strong>星座：</strong>__星座__</li>
-                        <li><strong>喜歡的顏色：</strong>粉色、白色</li>
-                        <li><strong>興趣：</strong>旅行、甜點、追劇</li>
-                        <li><strong>一句話：</strong>永遠可愛，永遠被愛！</li>
-                    </ul>
+            <div class="ins-card" style="text-align:center;">
+                <img src="friend-photo.jpg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
+                <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">親愛的小壽星</h2>
+                <div style="color: var(--secondary-text); line-height: 1.8;">
+                    <p><strong>名字：</strong>__朋友的名字__</p>
+                    <p><strong>生日：</strong>__月__日</p>
+                    <p><strong>星座：</strong>__星座__</p>
+                    <p><strong>興趣：</strong>旅行、甜點、追劇</p>
+                    <p style="margin-top:1rem;">「永遠可愛，永遠被愛！」</p>
                 </div>
             </div>
-            <div class="back-link" onclick="showPage('home')">← 回到主頁</div>
         </div>
 
-        <!-- 副頁面2：翻轉生日卡 -->
+        <!-- 回憶照片牆（已移除返回按鈕） -->
+        <div id="gallery" class="page">
+            <div class="ins-card">
+                <h3 style="margin-bottom: 1rem; font-weight: 600;">📸 我們的回憶</h3>
+                <div class="photo-grid" id="photoGrid">
+                    <!-- 動態生成或手動放圖 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 祝福留言板（已移除返回按鈕） -->
+        <div id="wishes" class="page">
+            <div class="ins-card">
+                <h3 style="font-weight: 600;">💌 給壽星的祝福</h3>
+                <div class="comments">
+                    <div class="comment-input">
+                        <input type="text" id="commentInput" placeholder="寫下你的祝福...">
+                        <button class="ins-btn" onclick="addComment()">發送</button>
+                    </div>
+                    <ul class="comment-list" id="commentList"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 秘密生日卡（已移除返回按鈕） -->
         <div id="card" class="page">
-            <div class="card-container" onclick="this.querySelector('.birthday-card').classList.toggle('flipped')">
-                <div class="birthday-card">
-                    <div class="card-front">
-                        <p>🎂</p>
-                        <p>打開卡片</p>
-                    </div>
-                    <div class="card-back">
-                        <p>親愛的朋友，</p>
-                        <p>願你的每一天都像今天一樣閃閃發光✨</p>
-                        <p>生日快樂！</p>
-                        <p>— 愛你的我 💖</p>
+            <div class="ins-card" style="perspective: 1000px; background: transparent; border: none; box-shadow: none; padding: 0;">
+                <div class="card-container" id="cardContainer" onclick="flipCard()">
+                    <div class="birthday-card" id="birthdayCard">
+                        <div class="card-front">
+                            <p style="font-family: 'Pacifico', cursive; font-size: 2.5rem; color: white;">🎂</p>
+                            <p style="color: white;">點擊翻轉</p>
+                        </div>
+                        <div class="card-back">
+                            <p style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #4e342e;">
+                                親愛的朋友，<br>
+                                願你的每一天都像今天一樣閃閃發光✨<br>
+                                生日快樂！<br>
+                                — 愛你的我 💖
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <p style="color: #888; margin-top: 1rem;">（點擊卡片翻轉看祝福）</p>
-            <div class="back-link" onclick="showPage('home')">← 回到主頁</div>
         </div>
     </div>
 
-    <!-- 導航按鈕（禮物盒圖標） -->
-    <div class="nav-buttons">
-        <button class="nav-btn" onclick="showPage('profile')" title="個人檔案">🎁</button>
-        <button class="nav-btn" onclick="showPage('card')" title="生日卡">🎁</button>
-        <button class="nav-btn home-btn" onclick="showPage('home')" title="主頁">🏠</button>
+    <!-- 密碼彈窗 -->
+    <div class="modal-overlay" id="passwordModal" style="display: none;">
+        <div class="modal">
+            <h3>🔐 輸入密碼打開卡片</h3>
+            <input type="password" id="pwdInput" placeholder="輸入密碼" maxlength="4">
+            <button class="ins-btn" onclick="checkPassword()">解鎖</button>
+            <p class="error-msg" id="pwdError"></p>
+        </div>
     </div>
-
-    <!-- 音樂控制（請將 birthday.mp3 放在同目錄下） -->
-    <div class="music-control" id="musicControl" onclick="toggleMusic()" title="播放/暫停音樂">🎵</div>
-    <audio id="bgMusic" loop>
-        <source src="birthday.mp3" type="audio/mpeg">
-        你的瀏覽器不支援音樂播放。
-    </audio>
 
     <script>
+        // ---------- 全域變數 ----------
+        const correctPassword = "201076";
+        let passwordVerified = false;
+
         // ---------- 愛心飄落 ----------
         function createHearts() {
             const container = document.getElementById('heartsContainer');
-            const heartChars = ['❤️', '🌸', '✨', '💖', '🎀'];
+            const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
             for (let i = 0; i < 40; i++) {
                 const heart = document.createElement('span');
                 heart.className = 'heart';
@@ -395,73 +496,163 @@
 
         // ---------- 頁面切換 ----------
         function showPage(pageId) {
-            // 隱藏所有頁面
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // 顯示目標頁面
             document.getElementById(pageId).classList.add('active');
-            // 如果回到主頁，重新播放文字動畫
             if (pageId === 'home') {
                 startTextAnimation();
+                updateCountdown();
             }
+            if (pageId === 'gallery') loadGallery();
+            if (pageId === 'wishes') loadComments();
         }
 
-        // ---------- 逐字彈出動畫 ----------
+        // ---------- 逐字動畫 ----------
         function startTextAnimation() {
             const container = document.getElementById('animatedText');
-            // 可自訂祝福文字（請將「小可愛」換成朋友名字）
-            const message = "親愛的小可愛，生日快樂！";
+            const message = "Susan,Happy Birthday!"; // 可自行修改名字
             container.innerHTML = '';
-            // 用 span 包住每個字
             [...message].forEach((char, index) => {
                 const span = document.createElement('span');
                 span.textContent = char;
                 span.style.animationDelay = (index * 0.12) + 's';
                 container.appendChild(span);
             });
-            // 最後一個字出現後稍等一下放彩帶
             const totalDuration = (message.length * 0.12 + 0.6) * 1000;
             setTimeout(() => {
                 confetti({
-                    particleCount: 150,
-                    spread: 80,
+                    particleCount: 120,
+                    spread: 70,
                     origin: { y: 0.6 }
                 });
             }, totalDuration);
         }
 
-        // 初次載入自動播放
-        window.addEventListener('load', () => {
-            startTextAnimation();
+        // ---------- 倒數計時 ----------
+        function updateCountdown() {
+            const now = new Date();
+            const endOfDay = new Date(now);
+            endOfDay.setHours(23, 59, 59, 999);
+            const diff = endOfDay - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById('countdown').textContent = `${hours}時 ${minutes}分 ${seconds}秒`;
+        }
+        setInterval(() => {
+            if (document.getElementById('home').classList.contains('active')) {
+                updateCountdown();
+            }
+        }, 1000);
+
+        // ---------- 照片牆 ----------
+        function loadGallery() {
+            const grid = document.getElementById('photoGrid');
+            if (grid.children.length > 0) return;
+            const defaultImages = [
+                'gallery1.jpg', 'gallery2.jpg', 'gallery3.jpg',
+                'gallery4.jpg', 'gallery5.jpg', 'gallery6.jpg'
+            ];
+            defaultImages.forEach((src, idx) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `回憶 ${idx+1}`;
+                img.onerror = () => { img.src = 'friend-photo.jpg'; };
+                grid.appendChild(img);
+            });
+        }
+
+        // ---------- 留言板 ----------
+        function loadComments() {
+            const list = document.getElementById('commentList');
+            const comments = JSON.parse(localStorage.getItem('birthdayComments') || '[]');
+            list.innerHTML = '';
+            comments.forEach((text, idx) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<div class="avatar">💬</div><span>${escapeHtml(text)}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const comments = JSON.parse(localStorage.getItem('birthdayComments') || '[]');
+            comments.push(text);
+            localStorage.setItem('birthdayComments', JSON.stringify(comments));
+            input.value = '';
+            loadComments();
+            confetti({
+                particleCount: 30,
+                spread: 50,
+                origin: { y: 0.7, x: 0.5 }
+            });
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // ---------- 密碼驗證 ----------
+        function showCardWithPassword() {
+            if (passwordVerified) {
+                showPage('card');
+            } else {
+                document.getElementById('passwordModal').style.display = 'flex';
+                document.getElementById('pwdInput').value = '';
+                document.getElementById('pwdError').textContent = '';
+            }
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('pwdInput').value.trim();
+            if (input === correctPassword) {
+                passwordVerified = true;
+                document.getElementById('passwordModal').style.display = 'none';
+                showPage('card');
+            } else {
+                document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
+            }
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
         });
+
+        // ---------- 卡片翻轉 ----------
+        function flipCard() {
+            document.getElementById('birthdayCard').classList.toggle('flipped');
+        }
 
         // ---------- 音樂控制 ----------
         const bgMusic = document.getElementById('bgMusic');
-        const musicControl = document.getElementById('musicControl');
         let musicPlaying = false;
-
         function toggleMusic() {
             if (musicPlaying) {
                 bgMusic.pause();
-                musicControl.classList.remove('playing');
-                musicControl.textContent = '🎵';
+                document.getElementById('musicControl').textContent = '🎵';
             } else {
-                bgMusic.play().catch(e => console.log('音樂播放需用戶互動'));
-                musicControl.classList.add('playing');
-                musicControl.textContent = '🎶';
+                bgMusic.play().catch(() => {});
+                document.getElementById('musicControl').textContent = '🎶';
             }
             musicPlaying = !musicPlaying;
         }
-
-        // 若想自動播放（可能被瀏覽器阻擋），嘗試在第一次點擊任何地方時播放
         document.body.addEventListener('click', function initAudio() {
             if (!musicPlaying) {
                 bgMusic.play().then(() => {
                     musicPlaying = true;
-                    musicControl.classList.add('playing');
-                    musicControl.textContent = '🎶';
+                    document.getElementById('musicControl').textContent = '🎶';
                 }).catch(() => {});
             }
         }, { once: true });
+
+        // 初始化
+        window.addEventListener('load', () => {
+            startTextAnimation();
+            updateCountdown();
+        });
     </script>
 </body>
 </html>
