@@ -41,34 +41,95 @@
             0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.7; }
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
+
+        /* ---------- 頂部導航修正版 ---------- */
         .top-bar {
             position: fixed; top: 0; left: 0; width: 100%; height: var(--topbar-height);
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border); display: flex; align-items: center;
-            justify-content: space-between; padding: 0 1.5rem; z-index: 10; box-shadow: var(--shadow);
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center;
+            justify-content: space-between; 
+            padding: 0 1rem; 
+            z-index: 10; 
+            box-shadow: var(--shadow);
+            overflow-x: auto;               /* 手機可橫向滾動 */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;          /* 隱藏滾動條 Firefox */
+            -ms-overflow-style: none;       /* 隱藏滾動條 IE */
+        }
+        .top-bar::-webkit-scrollbar {
+            display: none;                  /* 隱藏滾動條 Chrome/Safari */
         }
         .top-bar .site-title {
-            font-size: 1.4rem; font-weight: 500; color: var(--accent); letter-spacing: 1px; white-space: nowrap;
+            font-size: 1.2rem; 
+            font-weight: 500; 
+            color: var(--accent); 
+            letter-spacing: 1px;
+            flex-shrink: 0;                /* 標題不會被壓縮 */
+            margin-right: 1rem;
         }
-        .nav-stories { display: flex; gap: 12px; align-items: center; }
-        .nav-stories .story-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        .nav-stories {
+            display: flex; 
+            gap: 8px; 
+            align-items: center;
+            flex-wrap: nowrap;             /* 強制不換行 */
+            flex-shrink: 0;
+        }
+        .nav-stories .story-item {
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+            min-width: 44px;               /* 確保點擊區域夠大 */
+        }
         .nav-stories .story-item:hover { transform: scale(1.05); }
         .nav-stories .story-ring {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: linear-gradient(135deg, #e0b0af, #d4a0a0); padding: 2px;
-            display: flex; align-items: center; justify-content: center;
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0b0af, #d4a0a0); 
+            padding: 2px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
         }
-        .nav-stories .story-ring img, .nav-stories .story-ring i {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            background: white; display: flex; align-items: center; justify-content: center;
-            color: var(--accent); font-size: 1.2rem;
+        .nav-stories .story-ring img, 
+        .nav-stories .story-ring i {
+            width: 100%; 
+            height: 100%; 
+            border-radius: 50%; 
+            object-fit: cover;
+            background: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            color: var(--accent); 
+            font-size: 1rem;
         }
-        .nav-stories .story-label { font-size: 0.65rem; margin-top: 2px; color: var(--secondary-text); max-width: 50px; text-align: center; }
-        #app { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 1rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; }
+        .nav-stories .story-label { 
+            font-size: 0.6rem; 
+            margin-top: 2px; 
+            color: var(--secondary-text); 
+            max-width: 50px; 
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #app { 
+            position: relative; z-index: 1; max-width: 520px; margin: 0 auto; 
+            padding: 1rem 1rem 3rem; display: flex; flex-direction: column; align-items: center; 
+        }
         .page { display: none; width: 100%; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .ins-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); transition: transform 0.2s; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .ins-card { 
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; 
+            padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); transition: transform 0.2s; 
+        }
         .ins-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.05); }
         #home .animated-text {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
@@ -93,23 +154,17 @@
         .photo-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: pointer; transition: filter 0.2s; }
         .photo-grid img:hover { filter: brightness(0.95); }
 
-        /* 留言板容器與 iframe 高度修復 */
+        /* Cusdis 容器 */
         #cusdis_thread {
-            min-height: 60vh;          /* 電腦版高度 */
+            min-height: 300px;
             position: relative;
         }
-        #cusdis_thread iframe {
-            width: 100% !important;    /* 強制寬度填滿 */
-            height: 100% !important;   /* 嘗試繼承父容器高度 */
-            min-height: 60vh !important;
-        }
-        @media (max-width: 500px) {
-            #cusdis_thread {
-                min-height: 50vh;      /* 手機版稍微降低 */
-            }
-            #cusdis_thread iframe {
-                min-height: 50vh !important;
-            }
+        .cusdis-fallback {
+            display: none;
+            color: var(--secondary-text);
+            text-align: center;
+            padding: 2rem 0;
+            font-size: 0.9rem;
         }
 
         .card-container { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; }
@@ -120,10 +175,10 @@
         .card-back { background: white; transform: rotateY(180deg); }
         .card-front p, .card-back p { font-family: 'Dancing Script', cursive; }
         .music-float { position: fixed; bottom: 24px; right: 24px; background: white; border-radius: 50%; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; z-index: 15; font-size: 1.2rem; color: var(--accent); border: 1px solid var(--border); }
+
+        /* 響應式微調 */
         @media (max-width: 500px) {
-            .top-bar .site-title { font-size: 1.2rem; }
-            .nav-stories .story-ring { width: 36px; height: 36px; }
-            .nav-stories .story-label { font-size: 0.55rem; }
+            .top-bar .site-title { font-size: 1rem; }
             #home .animated-text { font-size: 2.2rem; }
         }
     </style>
@@ -131,7 +186,7 @@
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
 
-    <!-- 頂部導航欄 -->
+    <!-- 頂部導航欄（手機橫向滾動優化） -->
     <header class="top-bar">
         <div class="site-title">🌸 Susan's Day</div>
         <nav class="nav-stories">
@@ -191,18 +246,22 @@
             </div>
         </div>
 
-        <!-- 祝福留言板（Cusdis，高度已修復） -->
+        <!-- 祝福留言板（Cusdis + 後備提示） -->
         <div id="wishes" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
+                <!-- Cusdis 容器 -->
                 <div id="cusdis_thread"
                      data-host="https://cusdis.com"
                      data-app-id="6553cb70-9b01-42d6-a6ac-7daa68ba38fb"
                      data-page-id="susan-birthday"
-                     data-page-url="{{ PAGE_URL }}"
                      data-page-title="Susan 的生日祝福牆">
                 </div>
-                <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+                <!-- 後備提示（預設隱藏，若 Cusdis 10 秒未載入則顯示） -->
+                <div class="cusdis-fallback" id="cusdisFallback">
+                    😢 留言板暫時無法載入<br>
+                    請改用 <strong>Safari / Chrome</strong> 開啟網站，或直接私訊壽星祝福 💌
+                </div>
             </div>
         </div>
 
@@ -239,8 +298,11 @@
         </div>
     </div>
 
+    <!-- 將 Cusdis 腳本放在 body 底部，移除 async defer 以提高 WeChat 相容性 -->
+    <script src="https://cusdis.com/js/cusdis.es.js"></script>
+
     <script>
-        // ===== 設定 Cusdis 動態 page-url =====
+        // 動態設定 Cusdis 的 page-url
         (function() {
             const thread = document.getElementById('cusdis_thread');
             if (thread) {
@@ -248,31 +310,17 @@
             }
         })();
 
-        // ===== 強制調整 Cusdis iframe 高度 =====
-        function resizeCusdisIframe() {
+        // 若 10 秒後 Cusdis 尚未載入 iframe，顯示後備提示
+        setTimeout(function() {
             const thread = document.getElementById('cusdis_thread');
-            if (!thread) return;
-            const iframe = thread.querySelector('iframe');
-            if (iframe) {
-                // 直接設定 iframe 的高度屬性，跨域下仍可修改元素屬性
-                iframe.style.height = '100%';
-                // 有些瀏覽器需要明確的像素值，也可以根據父容器計算
-                const containerHeight = thread.clientHeight;
-                if (containerHeight > 0) {
-                    iframe.style.height = containerHeight + 'px';
-                } else {
-                    // 父容器高度可能為 0（尚未顯示），至少給一個最小高度
-                    iframe.style.height = '60vh';
+            const fallback = document.getElementById('cusdisFallback');
+            if (thread && fallback) {
+                const iframe = thread.querySelector('iframe');
+                if (!iframe || iframe.offsetHeight === 0) {
+                    fallback.style.display = 'block';
                 }
             }
-        }
-
-        // 在 Cusdis 載入後及每次切換到祝福頁面時調整
-        function onWishesPageActive() {
-            // 等待 Cusdis iframe 出現（可能還沒載入完成）
-            setTimeout(resizeCusdisIframe, 500);
-            setTimeout(resizeCusdisIframe, 1500);
-        }
+        }, 10000);
 
         // ===== 密碼設定 =====
         const correctPassword = "201076";
@@ -301,7 +349,10 @@
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') startTextAnimation();
             if (pageId === 'gallery') loadGallery();
-            if (pageId === 'wishes') onWishesPageActive();  // 切換到祝福頁時調整高度
+            // 切到祝福頁時，隱藏舊的後備提示（如果 Cusdis 後來成功載入）
+            if (pageId === 'wishes') {
+                document.getElementById('cusdisFallback').style.display = 'none';
+            }
         }
 
         // ===== 逐字動畫 =====
@@ -389,10 +440,6 @@
         // ===== 初始化 =====
         window.addEventListener('load', () => {
             startTextAnimation();
-            // 如果一開始就在祝福頁（不太可能），也調整一次
-            if (document.getElementById('wishes').classList.contains('active')) {
-                onWishesPageActive();
-            }
         });
     </script>
 </body>
