@@ -93,13 +93,22 @@
         .photo-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: pointer; transition: filter 0.2s; }
         .photo-grid img:hover { filter: brightness(0.95); }
 
-        /* ===== 加大留言板高度 ===== */
+        /* 留言板容器與 iframe 高度修復 */
         #cusdis_thread {
-            min-height: 60vh;   /* 至少佔螢幕 60% 高度，電腦上看超多留言也很方便 */
+            min-height: 60vh;          /* 電腦版高度 */
+            position: relative;
+        }
+        #cusdis_thread iframe {
+            width: 100% !important;    /* 強制寬度填滿 */
+            height: 100% !important;   /* 嘗試繼承父容器高度 */
+            min-height: 60vh !important;
         }
         @media (max-width: 500px) {
             #cusdis_thread {
-                min-height: 50vh; /* 手機上稍微降低，避免佔滿整個畫面 */
+                min-height: 50vh;      /* 手機版稍微降低 */
+            }
+            #cusdis_thread iframe {
+                min-height: 50vh !important;
             }
         }
 
@@ -182,7 +191,7 @@
             </div>
         </div>
 
-        <!-- 祝福留言板（Cusdis，高度加大） -->
+        <!-- 祝福留言板（Cusdis，高度已修復） -->
         <div id="wishes" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
@@ -239,6 +248,32 @@
             }
         })();
 
+        // ===== 強制調整 Cusdis iframe 高度 =====
+        function resizeCusdisIframe() {
+            const thread = document.getElementById('cusdis_thread');
+            if (!thread) return;
+            const iframe = thread.querySelector('iframe');
+            if (iframe) {
+                // 直接設定 iframe 的高度屬性，跨域下仍可修改元素屬性
+                iframe.style.height = '100%';
+                // 有些瀏覽器需要明確的像素值，也可以根據父容器計算
+                const containerHeight = thread.clientHeight;
+                if (containerHeight > 0) {
+                    iframe.style.height = containerHeight + 'px';
+                } else {
+                    // 父容器高度可能為 0（尚未顯示），至少給一個最小高度
+                    iframe.style.height = '60vh';
+                }
+            }
+        }
+
+        // 在 Cusdis 載入後及每次切換到祝福頁面時調整
+        function onWishesPageActive() {
+            // 等待 Cusdis iframe 出現（可能還沒載入完成）
+            setTimeout(resizeCusdisIframe, 500);
+            setTimeout(resizeCusdisIframe, 1500);
+        }
+
         // ===== 密碼設定 =====
         const correctPassword = "201076";
         let passwordVerified = false;
@@ -266,6 +301,7 @@
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') startTextAnimation();
             if (pageId === 'gallery') loadGallery();
+            if (pageId === 'wishes') onWishesPageActive();  // 切換到祝福頁時調整高度
         }
 
         // ===== 逐字動畫 =====
@@ -353,6 +389,10 @@
         // ===== 初始化 =====
         window.addEventListener('load', () => {
             startTextAnimation();
+            // 如果一開始就在祝福頁（不太可能），也調整一次
+            if (document.getElementById('wishes').classList.contains('active')) {
+                onWishesPageActive();
+            }
         });
     </script>
 </body>
