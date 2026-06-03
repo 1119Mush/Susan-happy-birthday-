@@ -4,39 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎂 生日快樂 | ins風格</title>
-    <!-- Google Fonts: Instagram 常用字體 + 手寫體 -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
-    <!-- Font Awesome 圖標 -->
+    <!-- Google Fonts：僅用於英文字體，避免中文破圖 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- canvas-confetti 彩帶特效 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         :root {
             --bg: #fafafa;
             --card-bg: #ffffff;
-            --text: #262626;
+            --text: #4a4a4a;
             --secondary-text: #8e8e8e;
-            --accent: #d81b60;
-            --accent-light: #f8bbd0;
-            --border: #dbdbdb;
-            --shadow: 0 1px 3px rgba(0,0,0,0.08);
-            --radius: 16px;
-            --ins-radius: 12px;
+            --accent: #c97b84;       /* 低飽和粉 */
+            --accent-light: #f2d5d5;
+            --border: #e0e0e0;
+            --shadow: 0 1px 4px rgba(0,0,0,0.04);
+            --topbar-height: 70px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
             position: relative;
             -webkit-font-smoothing: antialiased;
+            padding-top: calc(var(--topbar-height) + 1rem);
         }
 
-        /* 愛心飄落背景 */
+        /* 愛心飄落背景（固定在背後） */
         .hearts-container {
             position: fixed;
             top: 0; left: 0;
@@ -46,24 +43,98 @@
         }
         .heart {
             position: absolute;
-            color: #ff4081;
-            opacity: 0.6;
+            color: #d4888c;
+            opacity: 0.5;
             font-size: 20px;
             animation: fall linear infinite;
         }
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.7; }
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* 主容器 */
+        /* ---------- 頂部固定導航欄 ---------- */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--topbar-height);
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 10;
+            box-shadow: var(--shadow);
+        }
+
+        .top-bar .site-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        /* 導航圓圈容器，放在 top-bar 右側 */
+        .nav-stories {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-stories .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .nav-stories .story-item:hover {
+            transform: scale(1.05);
+        }
+        .nav-stories .story-ring {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0b0af, #d4a0a0);
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-stories .story-ring img,
+        .nav-stories .story-ring i {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        .nav-stories .story-label {
+            font-size: 0.65rem;
+            margin-top: 2px;
+            color: var(--secondary-text);
+            max-width: 50px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* 主容器，所有頁面內容居中 */
         #app {
             position: relative;
             z-index: 1;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
-            padding: 2rem 1rem 4rem;
-            min-height: 100vh;
+            padding: 1rem 1rem 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -79,34 +150,35 @@
             display: block;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ---------- INS 風格卡片 ---------- */
+        /* INS 風格卡片 */
         .ins-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: var(--ins-radius);
+            border-radius: 16px;
             padding: 24px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
         .ins-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
         }
 
-        /* 主頁動畫文字 */
+        /* 主頁動畫文字（中文使用系統字體） */
         #home .animated-text {
-            font-family: 'Pacifico', cursive;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
             font-size: 2.8rem;
+            font-weight: 600;
             color: var(--accent);
             text-align: center;
             line-height: 1.4;
             min-height: 4rem;
-            margin-bottom: 2rem;
+            margin: 2rem 0 1.5rem;
         }
         .animated-text span {
             display: inline-block;
@@ -120,51 +192,6 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 限時動態圓圈導航 */
-        .story-row {
-            display: flex;
-            gap: 18px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 1.5rem 0;
-        }
-        .story-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .story-item:hover {
-            transform: scale(1.05);
-        }
-        .story-ring {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            padding: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .story-ring img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid white;
-            background: white;
-        }
-        .story-label {
-            font-size: 0.8rem;
-            margin-top: 6px;
-            color: var(--text);
-            font-weight: 500;
-            max-width: 80px;
-            text-align: center;
-        }
-
         /* 按鈕 */
         .ins-btn {
             background: var(--accent);
@@ -172,28 +199,22 @@
             border: none;
             padding: 10px 24px;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 1rem;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
-            display: inline-block;
         }
         .ins-btn:active { transform: scale(0.96); }
-        .ins-btn.secondary {
-            background: transparent;
-            color: var(--accent);
-            border: 1px solid var(--accent);
-        }
 
         /* 密碼彈窗 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 20;
+            z-index: 30;
             backdrop-filter: blur(4px);
         }
         .modal {
@@ -203,7 +224,7 @@
             max-width: 320px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
         .modal input {
             width: 100%;
@@ -214,9 +235,7 @@
             margin: 1rem 0;
             outline: none;
         }
-        .modal input:focus {
-            border-color: var(--accent);
-        }
+        .modal input:focus { border-color: var(--accent); }
         .error-msg {
             color: #e74c3c;
             font-size: 0.9rem;
@@ -234,18 +253,14 @@
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             transition: filter 0.2s;
         }
-        .photo-grid img:hover {
-            filter: brightness(0.9);
-        }
+        .photo-grid img:hover { filter: brightness(0.95); }
 
         /* 留言區 */
-        .comments {
-            margin-top: 1.5rem;
-        }
+        .comments { margin-top: 1rem; }
         .comment-input {
             display: flex;
             gap: 8px;
@@ -253,7 +268,7 @@
         }
         .comment-input input {
             flex: 1;
-            padding: 10px;
+            padding: 10px 14px;
             border: 1px solid var(--border);
             border-radius: 20px;
             font-size: 0.9rem;
@@ -266,7 +281,7 @@
         }
         .comment-list li {
             padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -275,44 +290,18 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: #e0e0e0;
+            background: #f0e0e0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.8rem;
         }
 
-        /* 響應式 */
-        @media (max-width: 480px) {
-            #home .animated-text { font-size: 2rem; }
-            .story-ring { width: 65px; height: 65px; }
-        }
-
-        /* 音樂按鈕 */
-        .music-float {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: white;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            cursor: pointer;
-            z-index: 15;
-            font-size: 1.4rem;
-            color: var(--accent);
-            border: 1px solid var(--border);
-        }
-
-        /* 卡片翻轉效果 */
+        /* 卡片翻轉 */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: 350px;
+            height: 320px;
             cursor: pointer;
         }
         .birthday-card {
@@ -322,16 +311,14 @@
             transition: transform 0.8s;
             transform-style: preserve-3d;
         }
-        .birthday-card.flipped {
-            transform: rotateY(180deg);
-        }
+        .birthday-card.flipped { transform: rotateY(180deg); }
         .card-front, .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
             border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -339,11 +326,43 @@
             padding: 2rem;
         }
         .card-front {
-            background: linear-gradient(145deg, #ff9a9e, #fad0c4);
+            background: linear-gradient(145deg, #e6c7c7, #f2d5d5);
         }
         .card-back {
             background: white;
             transform: rotateY(180deg);
+        }
+        /* 卡片上的英文字可用手寫體 */
+        .card-front p, .card-back p {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* 音樂控制 */
+        .music-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 15;
+            font-size: 1.2rem;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 500px) {
+            .top-bar .site-title { font-size: 1.2rem; }
+            .nav-stories .story-ring { width: 36px; height: 36px; }
+            .nav-stories .story-label { font-size: 0.55rem; }
+            #home .animated-text { font-size: 2.2rem; }
         }
     </style>
 </head>
@@ -351,84 +370,74 @@
     <!-- 愛心飄落 -->
     <div class="hearts-container" id="heartsContainer"></div>
 
+    <!-- 頂部固定導航欄（所有頁面可見） -->
+    <header class="top-bar">
+        <div class="site-title">🌸 Susan's Day</div>
+        <nav class="nav-stories">
+            <div class="story-item" onclick="showPage('home')">
+                <div class="story-ring"><i class="fas fa-home"></i></div>
+                <span class="story-label">主頁</span>
+            </div>
+            <div class="story-item" onclick="showPage('profile')">
+                <div class="story-ring"><img src="friend-photo.jpg" alt="壽星"></div>
+                <span class="story-label">檔案</span>
+            </div>
+            <div class="story-item" onclick="showPage('gallery')">
+                <div class="story-ring"><img src="gallery-thumb.jpg" alt="回憶"></div>
+                <span class="story-label">回憶</span>
+            </div>
+            <div class="story-item" onclick="showPage('wishes')">
+                <div class="story-ring"><i class="fas fa-heart"></i></div>
+                <span class="story-label">祝福</span>
+            </div>
+            <div class="story-item" onclick="showCardWithPassword()">
+                <div class="story-ring"><i class="fas fa-gift"></i></div>
+                <span class="story-label">卡片</span>
+            </div>
+        </nav>
+    </header>
+
     <!-- 音樂控制 -->
     <div class="music-float" id="musicControl" onclick="toggleMusic()" title="生日歌">🎵</div>
     <audio id="bgMusic" loop>
         <source src="birthday.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 主應用 -->
+    <!-- 主內容區域 -->
     <div id="app">
         <!-- 主頁 -->
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-
-            <!-- 限時動態風格導航 -->
-            <div class="story-row">
-                <div class="story-item" onclick="showPage('profile')">
-                    <div class="story-ring">
-                        <img src="friend-photo.jpg" alt="壽星">
-                    </div>
-                    <span class="story-label">個人檔案</span>
-                </div>
-                <div class="story-item" onclick="showPage('gallery')">
-                    <div class="story-ring">
-                        <img src="gallery-thumb.jpg" alt="回憶">
-                    </div>
-                    <span class="story-label">回憶牆</span>
-                </div>
-                <div class="story-item" onclick="showPage('wishes')">
-                    <div class="story-ring">
-                        <i class="fas fa-heart" style="font-size: 2rem; color: white; background: linear-gradient(45deg, #f09433, #e6683c); width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;"></i>
-                    </div>
-                    <span class="story-label">祝福留言</span>
-                </div>
-                <div class="story-item" onclick="showCardWithPassword()">
-                    <div class="story-ring">
-                        <i class="fas fa-gift" style="font-size: 2rem; color: white; background: linear-gradient(45deg, #dc2743, #cc2366); width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;"></i>
-                    </div>
-                    <span class="story-label">秘密卡片</span>
-                </div>
-            </div>
-
-            <!-- 倒數計時（距離今天結束） -->
-            <div class="ins-card" style="text-align:center;">
-                <p style="color: var(--secondary-text); font-size: 0.9rem;">⏳ 生日還剩</p>
-                <div style="font-size: 2rem; font-weight: 600; color: var(--accent);" id="countdown"></div>
-            </div>
-
-            <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center;">點擊上方圓圈探索更多 🎀</p>
+            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
         </div>
 
-        <!-- 個人檔案頁面（已移除返回按鈕） -->
+        <!-- 個人檔案 -->
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
                 <img src="friend-photo.jpg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
-                <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">親愛的小壽星</h2>
+                <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">Susan</h2>
                 <div style="color: var(--secondary-text); line-height: 1.8;">
-                    <p><strong>名字：</strong>__朋友的名字__</p>
-                    <p><strong>生日：</strong>__月__日</p>
-                    <p><strong>星座：</strong>__星座__</p>
+                    <p><strong>名字：</strong>Susan</p>
+                    <p><strong>生日：</strong>10月7日</p>
+                    <p><strong>星座：</strong>天秤座</p>
                     <p><strong>興趣：</strong>旅行、甜點、追劇</p>
                     <p style="margin-top:1rem;">「永遠可愛，永遠被愛！」</p>
                 </div>
             </div>
         </div>
 
-        <!-- 回憶照片牆（已移除返回按鈕） -->
+        <!-- 回憶照片牆 -->
         <div id="gallery" class="page">
             <div class="ins-card">
-                <h3 style="margin-bottom: 1rem; font-weight: 600;">📸 我們的回憶</h3>
-                <div class="photo-grid" id="photoGrid">
-                    <!-- 動態生成或手動放圖 -->
-                </div>
+                <h3 style="font-weight: 500; margin-bottom: 1rem;">📸 我們的回憶</h3>
+                <div class="photo-grid" id="photoGrid"></div>
             </div>
         </div>
 
-        <!-- 祝福留言板（已移除返回按鈕） -->
+        <!-- 祝福留言板 -->
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 600;">💌 給壽星的祝福</h3>
+                <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
                 <div class="comments">
                     <div class="comment-input">
                         <input type="text" id="commentInput" placeholder="寫下你的祝福...">
@@ -439,18 +448,18 @@
             </div>
         </div>
 
-        <!-- 秘密生日卡（已移除返回按鈕） -->
+        <!-- 秘密生日卡 -->
         <div id="card" class="page">
-            <div class="ins-card" style="perspective: 1000px; background: transparent; border: none; box-shadow: none; padding: 0;">
-                <div class="card-container" id="cardContainer" onclick="flipCard()">
+            <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
+                <div class="card-container" onclick="flipCard()">
                     <div class="birthday-card" id="birthdayCard">
                         <div class="card-front">
-                            <p style="font-family: 'Pacifico', cursive; font-size: 2.5rem; color: white;">🎂</p>
-                            <p style="color: white;">點擊翻轉</p>
+                            <p style="font-size: 2.8rem; color: white;">🎂</p>
+                            <p style="font-size: 1.4rem; color: white;">點擊翻轉</p>
                         </div>
                         <div class="card-back">
-                            <p style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #4e342e;">
-                                親愛的朋友，<br>
+                            <p style="font-size: 2rem; color: #5d4a4a;">
+                                親愛的 Susan，<br>
                                 願你的每一天都像今天一樣閃閃發光✨<br>
                                 生日快樂！<br>
                                 — 愛你的我 💖
@@ -473,11 +482,10 @@
     </div>
 
     <script>
-        // ---------- 全域變數 ----------
         const correctPassword = "201076";
         let passwordVerified = false;
 
-        // ---------- 愛心飄落 ----------
+        // 愛心飄落
         function createHearts() {
             const container = document.getElementById('heartsContainer');
             const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
@@ -494,22 +502,21 @@
         }
         createHearts();
 
-        // ---------- 頁面切換 ----------
+        // 頁面切換
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') {
                 startTextAnimation();
-                updateCountdown();
             }
             if (pageId === 'gallery') loadGallery();
             if (pageId === 'wishes') loadComments();
         }
 
-        // ---------- 逐字動畫 ----------
+        // 逐字動畫（直接播放，無計時器）
         function startTextAnimation() {
             const container = document.getElementById('animatedText');
-            const message = "Susan,Happy Birthday!"; // 可自行修改名字
+            const message = "Susan, Happy Birthday!";
             container.innerHTML = '';
             [...message].forEach((char, index) => {
                 const span = document.createElement('span');
@@ -527,24 +534,7 @@
             }, totalDuration);
         }
 
-        // ---------- 倒數計時 ----------
-        function updateCountdown() {
-            const now = new Date();
-            const endOfDay = new Date(now);
-            endOfDay.setHours(23, 59, 59, 999);
-            const diff = endOfDay - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('countdown').textContent = `${hours}時 ${minutes}分 ${seconds}秒`;
-        }
-        setInterval(() => {
-            if (document.getElementById('home').classList.contains('active')) {
-                updateCountdown();
-            }
-        }, 1000);
-
-        // ---------- 照片牆 ----------
+        // 照片牆
         function loadGallery() {
             const grid = document.getElementById('photoGrid');
             if (grid.children.length > 0) return;
@@ -552,21 +542,21 @@
                 'gallery1.jpg', 'gallery2.jpg', 'gallery3.jpg',
                 'gallery4.jpg', 'gallery5.jpg', 'gallery6.jpg'
             ];
-            defaultImages.forEach((src, idx) => {
+            defaultImages.forEach((src) => {
                 const img = document.createElement('img');
                 img.src = src;
-                img.alt = `回憶 ${idx+1}`;
+                img.alt = '回憶';
                 img.onerror = () => { img.src = 'friend-photo.jpg'; };
                 grid.appendChild(img);
             });
         }
 
-        // ---------- 留言板 ----------
+        // 留言板
         function loadComments() {
             const list = document.getElementById('commentList');
             const comments = JSON.parse(localStorage.getItem('birthdayComments') || '[]');
             list.innerHTML = '';
-            comments.forEach((text, idx) => {
+            comments.forEach((text) => {
                 const li = document.createElement('li');
                 li.innerHTML = `<div class="avatar">💬</div><span>${escapeHtml(text)}</span>`;
                 list.appendChild(li);
@@ -582,18 +572,14 @@
             localStorage.setItem('birthdayComments', JSON.stringify(comments));
             input.value = '';
             loadComments();
-            confetti({
-                particleCount: 30,
-                spread: 50,
-                origin: { y: 0.7, x: 0.5 }
-            });
+            confetti({ particleCount: 30, spread: 50, origin: { y: 0.7, x: 0.5 } });
         }
 
         function escapeHtml(unsafe) {
             return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // ---------- 密碼驗證 ----------
+        // 密碼驗證
         function showCardWithPassword() {
             if (passwordVerified) {
                 showPage('card');
@@ -616,17 +602,15 @@
         }
 
         document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
+            if (e.target === this) this.style.display = 'none';
         });
 
-        // ---------- 卡片翻轉 ----------
+        // 卡片翻轉
         function flipCard() {
             document.getElementById('birthdayCard').classList.toggle('flipped');
         }
 
-        // ---------- 音樂控制 ----------
+        // 音樂控制
         const bgMusic = document.getElementById('bgMusic');
         let musicPlaying = false;
         function toggleMusic() {
@@ -651,7 +635,6 @@
         // 初始化
         window.addEventListener('load', () => {
             startTextAnimation();
-            updateCountdown();
         });
     </script>
 </body>
