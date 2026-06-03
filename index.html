@@ -91,12 +91,10 @@
             align-items: center;
             justify-content: center;
         }
-        .nav-stories .story-ring img,
         .nav-stories .story-ring i {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            object-fit: cover;
             background: white;
             display: flex;
             align-items: center;
@@ -163,7 +161,6 @@
         }
         .wechat-notice i { margin-right: 4px; }
 
-        /* 留言板容器高度 */
         #cusdis_thread {
             min-height: 380px;
             width: 100%;
@@ -189,6 +186,7 @@
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
 
+    <!-- 頂部導航（圖標已更新） -->
     <header class="top-bar">
         <div class="site-title">🌸 Susan's Day</div>
         <nav class="nav-stories">
@@ -197,11 +195,11 @@
                 <span class="story-label">主頁</span>
             </div>
             <div class="story-item" onclick="showPage('profile')">
-                <div class="story-ring"><img src="friend-photo.jpg" alt="壽星"></div>
+                <div class="story-ring"><i class="fas fa-cat"></i></div>   <!-- 小貓圖標 -->
                 <span class="story-label">檔案</span>
             </div>
             <div class="story-item" onclick="showPage('gallery')">
-                <div class="story-ring"><img src="gallery-thumb.jpg" alt="回憶"></div>
+                <div class="story-ring"><i class="fas fa-camera"></i></div> <!-- 相機圖標 -->
                 <span class="story-label">回憶</span>
             </div>
             <div class="story-item" onclick="showPage('wishes')">
@@ -230,8 +228,8 @@
                 <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">Susan</h2>
                 <div style="color: var(--secondary-text); line-height: 1.8;">
                     <p><strong>名字：</strong>Susan</p>
-                    <p><strong>生日：</strong>7月6日</p>
-                    <p><strong>星座：</strong>巨蟹座</p>
+                    <p><strong>生日：</strong>10月7日</p>
+                    <p><strong>星座：</strong>天秤座</p>
                     <p><strong>興趣：</strong>旅行、甜點、追劇</p>
                     <p style="margin-top:1rem;">「永遠可愛，永遠被愛！」</p>
                 </div>
@@ -247,7 +245,7 @@
 
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500;">💌 給壽星的祝福（滑動查看留言）</h3>
+                <h3 style="font-weight: 500;">💌 給壽星的祝福</h3>
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
@@ -296,15 +294,13 @@
         // 動態填入當前網址
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
-        // ========== 自動調整 Cusdis iframe 高度 ==========
+        // 自動調整 Cusdis iframe 高度
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
             if (!thread) return;
             const iframe = thread.querySelector('iframe');
             if (iframe) {
-                // 讓 iframe 高度等於父容器高度
                 iframe.style.height = '100%';
-                // 有時候用明確像素值更穩定
                 const containerHeight = thread.clientHeight;
                 if (containerHeight > 0) {
                     iframe.style.height = containerHeight + 'px';
@@ -312,17 +308,14 @@
             }
         }
 
-        // MutationObserver 監聽 iframe 的出現（Cusdis 動態載入）
         const cusdisObserver = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.addedNodes.length > 0) {
                     const iframe = document.getElementById('cusdis_thread')?.querySelector('iframe');
                     if (iframe) {
                         adjustCusdisHeight();
-                        // 再等一下子，確保內容繪製完成
                         setTimeout(adjustCusdisHeight, 300);
                         setTimeout(adjustCusdisHeight, 1000);
-                        // 停止觀察，避免重複觸發
                         cusdisObserver.disconnect();
                         return;
                     }
@@ -330,7 +323,6 @@
             }
         });
 
-        // 開始觀察 cusdis_thread 的子節點變化
         function startObservingCusdis() {
             const thread = document.getElementById('cusdis_thread');
             if (thread) {
@@ -338,29 +330,23 @@
             }
         }
 
-        // 頁面載入後啟動觀察
         window.addEventListener('load', () => {
             startObservingCusdis();
-            // 雙重保險：切換到祝福頁面時再次嘗試調整
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
         });
 
-        // 每次切換到祝福頁面時也觸發調整
         function onWishesPageActive() {
-            // 重新啟動觀察（若之前已觸發 disconnect，需要重來）
             const thread = document.getElementById('cusdis_thread');
             if (thread && !thread.querySelector('iframe')) {
                 startObservingCusdis();
             }
-            // 立即嘗試調整
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 300);
             setTimeout(adjustCusdisHeight, 1000);
         }
 
-        // 原來的 showPage 中加入對 wishes 的處理
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
@@ -369,11 +355,9 @@
             }
         };
 
-        // ===== 密碼設定 =====
         const correctPassword = "201076";
         let passwordVerified = false;
 
-        // ===== 愛心飄落 =====
         function createHearts() {
             const container = document.getElementById('heartsContainer');
             const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
@@ -390,16 +374,13 @@
         }
         createHearts();
 
-        // ===== 頁面切換 =====
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'home') startTextAnimation();
             if (pageId === 'gallery') loadGallery();
-            // wishes 的處理已在上方覆蓋
         }
 
-        // ===== 逐字動畫 =====
         function startTextAnimation() {
             const container = document.getElementById('animatedText');
             const message = "Susan, Happy Birthday!";
@@ -416,7 +397,6 @@
             }, totalDuration);
         }
 
-        // ===== 照片牆 =====
         function loadGallery() {
             const grid = document.getElementById('photoGrid');
             if (grid.children.length > 0) return;
@@ -429,7 +409,6 @@
             });
         }
 
-        // ===== 生日卡密碼 =====
         function showCardWithPassword() {
             if (passwordVerified) {
                 showPage('card');
@@ -459,7 +438,6 @@
             document.getElementById('birthdayCard').classList.toggle('flipped');
         }
 
-        // ===== 音樂控制 =====
         const bgMusic = document.getElementById('bgMusic');
         let musicPlaying = false;
         function toggleMusic() {
@@ -481,10 +459,8 @@
             }
         }, { once: true });
 
-        // ===== 初始化 =====
         window.addEventListener('load', () => {
             startTextAnimation();
-            // 若一開始就在祝福頁（極少數情況），手動呼叫
             if (document.getElementById('wishes').classList.contains('active')) {
                 onWishesPageActive();
             }
