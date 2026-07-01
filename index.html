@@ -162,7 +162,6 @@
             height: 100%;
             transition: transform 0.6s;
             transform-style: preserve-3d;
-            cursor: pointer;
         }
         .flip-container.flipped .flip-inner {
             transform: rotateY(180deg);
@@ -202,7 +201,6 @@
 
         .flip-container.used {
             opacity: 0.5;
-            pointer-events: none;
         }
 
         .wechat-notice {
@@ -297,7 +295,7 @@
             <div class="ins-card">
                 <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 密碼兌換抽獎</h3>
                 <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
-                    輸入你的專屬密碼，翻開一張神秘小卡 💖
+                    輸入專屬密碼，隨機翻開一張神秘小卡 💖
                 </p>
                 <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
                     <input type="password" id="rafflePwdInput" placeholder="輸入抽獎密碼" maxlength="20" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:20px; font-size:0.9rem;">
@@ -359,7 +357,7 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ========== 你的 Gist 和 Token（已幫你填好） ==========
+        // ========== 你的 Gist 和 Token ==========
         const GIST_RAW_URL = "https://gist.githubusercontent.com/1119Mush/b8e8af6aa8d0933e5a359ec075ae8c55/raw/000622f1da0bb4098824cf4a6469186f20052204/raffle-data.json";
         const GIST_API_URL = "https://api.github.com/gists/b8e8af6aa8d0933e5a359ec075ae8c55";
         const GITHUB_TOKEN = "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";
@@ -418,6 +416,7 @@
             setTimeout(adjustCusdisHeight, 1000);
         }
 
+        // ===== 抽獎設定 =====
         const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
         const mysteryCards = [
             { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
@@ -428,21 +427,29 @@
             { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
         ];
 
-        let usedIndices = [];
+        // Gist 儲存的格式：{ usedCodes: [0,2], openedCards: [1,3] }
+        let usedCodes = [];     // 已使用過的密碼索引
+        let openedCards = [];   // 已翻開的卡片索引
 
         async function loadRaffleData() {
             try {
                 const response = await fetch(GIST_RAW_URL);
                 const data = await response.json();
-                usedIndices = data;
+                usedCodes = data.usedCodes || [];
+                openedCards = data.openedCards || [];
             } catch (error) {
                 console.error('讀取抽獎紀錄失敗:', error);
-                usedIndices = [];
+                usedCodes = [];
+                openedCards = [];
             }
         }
 
         async function saveRaffleData() {
             try {
+                const payload = {
+                    usedCodes: usedCodes,
+                    openedCards: openedCards
+                };
                 const response = await fetch(GIST_API_URL, {
                     method: 'PATCH',
                     headers: {
@@ -452,7 +459,7 @@
                     body: JSON.stringify({
                         files: {
                             'raffle-data.json': {
-                                content: JSON.stringify(usedIndices)
+                                content: JSON.stringify(payload)
                             }
                         }
                     })
@@ -467,7 +474,9 @@
         }
 
         function updateRemainingDisplay() {
-            const remaining = 6 - usedIndices.length;
+            const remainingCodes = 6 - usedCodes.length;
+            const remainingCards = 6 - openedCards.length;
+            const remaining = Math.min(remainingCodes, remainingCards);
             document.getElementById('remainingCount').textContent = remaining;
         }
 
@@ -480,7 +489,7 @@
                 container.className = 'flip-container';
                 container.dataset.cardIndex = index;
 
-                if (usedIndices.includes(index)) {
+                if (openedCards.includes(index)) {
                     container.classList.add('flipped', 'used');
                     container.innerHTML = `
                         <div class="flip-inner">
@@ -506,6 +515,18 @@
             renderCards();
         }
 
+        function getRandomUnopenedCard() {
+            const available = [];
+            for (let i = 0; i < mysteryCards.length; i++) {
+                if (!openedCards.includes(i)) {
+                    available.push(i);
+                }
+            }
+            if (available.length === 0) return -1;
+            const randomIndex = Math.floor(Math.random() * available.length);
+            return available[randomIndex];
+        }
+
         async function useRaffleCode() {
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
@@ -523,15 +544,30 @@
                 return;
             }
 
-            if (usedIndices.includes(codeIndex)) {
+            if (usedCodes.includes(codeIndex)) {
                 errorEl.textContent = '這個密碼已經被使用過了！';
                 return;
             }
 
-            usedIndices.push(codeIndex);
+            if (openedCards.length >= mysteryCards.length) {
+                errorEl.textContent = '所有卡片都已經被翻開了！';
+                return;
+            }
+
+            // 隨機選一張還沒翻開的卡片
+            const cardToOpen = getRandomUnopenedCard();
+            if (cardToOpen === -1) {
+                errorEl.textContent = '所有卡片都已經被翻開了！';
+                return;
+            }
+
+            // 標記密碼已使用、卡片已翻開
+            usedCodes.push(codeIndex);
+            openedCards.push(cardToOpen);
             await saveRaffleData();
 
-            const card = document.querySelector(`.flip-container[data-card-index="${codeIndex}"]`);
+            // 翻開卡片
+            const card = document.querySelector(`.flip-container[data-card-index="${cardToOpen}"]`);
             if (card && !card.classList.contains('flipped')) {
                 card.classList.add('flipped');
                 card.classList.add('used');
@@ -541,7 +577,7 @@
             input.value = '';
             updateRemainingDisplay();
 
-            if (usedIndices.length === 6) {
+            if (openedCards.length === 6) {
                 setTimeout(() => {
                     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
                     alert('🎉 恭喜！所有神秘小卡都已被揭曉！');
