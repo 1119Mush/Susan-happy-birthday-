@@ -303,7 +303,7 @@
                     <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
                         剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
                     </p>
-                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新</button>
+                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新同步</button>
                 </div>
             </div>
         </div>
@@ -356,8 +356,8 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ========== Worker 網址 ==========
-        const WORKER_URL = "https://shbd.by-yanki.workers.dev";
+        // ========== 你的 Worker 網址 ==========
+        const WORKER_URL = "https://sue.by-yanki.workers.dev";
 
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
@@ -427,10 +427,12 @@
         let openedCards = [];
         let pendingCodeIndex = -1;
 
-        // 從 Worker 讀取最新資料（強制不使用快取）
         async function loadRaffleData() {
             try {
-                const response = await fetch(`${WORKER_URL}/read?t=${Date.now()}`);
+                const response = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
                 if (!response.ok) throw new Error('讀取失敗');
                 const data = await response.json();
                 usedCodes = data.usedCodes || [];
@@ -442,19 +444,15 @@
             }
         }
 
-        // 儲存到 Worker
-        async function saveRaffleData() {
-            const payload = {
-                usedCodes: usedCodes,
-                openedCards: openedCards
-            };
+        async function saveRaffleData(payload) {
             const response = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             if (!response.ok) {
-                throw new Error('儲存失敗，HTTP ' + response.status);
+                const text = await response.text();
+                throw new Error('儲存失敗，伺服器回應: ' + text);
             }
         }
 
@@ -507,7 +505,6 @@
             updateRemainingDisplay();
         }
 
-        // 每次進入抽獎頁面都重新讀取 + 渲染
         async function loadMysteryCards() {
             await loadRaffleData();
             pendingCodeIndex = -1;
@@ -516,7 +513,6 @@
         }
 
         async function submitCode() {
-            // 先確保資料是最新的
             await loadRaffleData();
             
             const input = document.getElementById('rafflePwdInput');
@@ -557,26 +553,28 @@
             if (openedCards.includes(cardIndex)) return;
 
             const errorEl = document.getElementById('raffleError');
-
-            usedCodes.push(pendingCodeIndex);
-            openedCards.push(cardIndex);
+            
+            const newUsedCodes = [...usedCodes, pendingCodeIndex];
+            const newOpenedCards = [...openedCards, cardIndex];
+            const payload = {
+                usedCodes: newUsedCodes,
+                openedCards: newOpenedCards
+            };
 
             try {
-                await saveRaffleData();
+                await saveRaffleData(payload);
             } catch (error) {
-                usedCodes.pop();
-                openedCards.pop();
-                errorEl.textContent = '儲存失敗，請稍後再試';
+                errorEl.textContent = '儲存失敗，請稍後再試 (' + error.message + ')';
                 console.error(error);
                 return;
             }
 
-            // 儲存成功後重新渲染
+            await loadRaffleData();
+            
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
             renderCards();
 
-            // 翻開動畫
             const card = document.querySelector(`.flip-container[data-card-index="${cardIndex}"]`);
             if (card) {
                 card.classList.add('flipped', 'used');
@@ -592,7 +590,6 @@
             }
         }
 
-        // 覆蓋 showPage 以處理頁面切換
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
