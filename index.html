@@ -146,7 +146,6 @@
         .modal input:focus { border-color: var(--accent); }
         .error-msg { color: #e74c3c; font-size: 0.9rem; margin-top: 8px; }
 
-        /* ---------- 神秘翻牌牆 ---------- */
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -201,7 +200,6 @@
             color: #5d4a4a;
         }
 
-        /* 已抽過的卡片半透明提示 */
         .flip-container.used {
             opacity: 0.5;
             pointer-events: none;
@@ -295,10 +293,9 @@
             </div>
         </div>
 
-        <!-- 抽獎頁面 -->
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 密碼兌換抽獎（每人限一次）</h3>
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 密碼兌換抽獎</h3>
                 <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
                     輸入你的專屬密碼，翻開一張神秘小卡 💖
                 </p>
@@ -309,7 +306,7 @@
                 <p class="error-msg" id="raffleError"></p>
                 <div class="flip-grid" id="flipGrid"></div>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">
-                    剩餘可抽次數：<strong id="remainingCount">6</strong>
+                    剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
                 </p>
             </div>
         </div>
@@ -351,7 +348,6 @@
         </div>
     </div>
 
-    <!-- 密碼彈窗（生日卡） -->
     <div class="modal-overlay" id="passwordModal" style="display: none;">
         <div class="modal">
             <h3>🔐 輸入密碼打開卡片</h3>
@@ -363,6 +359,11 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
+        // ========== 你的 Gist 和 Token（已幫你填好） ==========
+        const GIST_RAW_URL = "https://gist.githubusercontent.com/1119Mush/b8e8af6aa8d0933e5a359ec075ae8c55/raw/000622f1da0bb4098824cf4a6469186f20052204/raffle-data.json";
+        const GIST_API_URL = "https://api.github.com/gists/b8e8af6aa8d0933e5a359ec075ae8c55";
+        const GITHUB_TOKEN = "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";
+
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
         function adjustCusdisHeight() {
@@ -417,18 +418,7 @@
             setTimeout(adjustCusdisHeight, 1000);
         }
 
-        // ===== 抽獎系統設定 =====
-        // 六組自訂密碼（可自行修改）
-        const raffleCodes = [
-            "SUSAN0706",
-            "BIRTHDAY",
-            "HAPPY",
-            "LOVEU",
-            "SURPRISE",
-            "CAKE"
-        ];
-
-        // 六張卡片內容（對應上面密碼順序）
+        const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
         const mysteryCards = [
             { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
             { front: "🌟", back: "幸運星降臨：<br>今天會發生一件<br>讓你超開心的小事！" },
@@ -438,34 +428,59 @@
             { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
         ];
 
-        // 用 localStorage 記錄已使用的密碼索引（跨重整保留）
-        function getUsedIndices() {
-            const stored = localStorage.getItem('raffleUsedIndices');
-            return stored ? JSON.parse(stored) : [];
+        let usedIndices = [];
+
+        async function loadRaffleData() {
+            try {
+                const response = await fetch(GIST_RAW_URL);
+                const data = await response.json();
+                usedIndices = data;
+            } catch (error) {
+                console.error('讀取抽獎紀錄失敗:', error);
+                usedIndices = [];
+            }
         }
 
-        function setUsedIndices(indices) {
-            localStorage.setItem('raffleUsedIndices', JSON.stringify(indices));
+        async function saveRaffleData() {
+            try {
+                const response = await fetch(GIST_API_URL, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'raffle-data.json': {
+                                content: JSON.stringify(usedIndices)
+                            }
+                        }
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error('更新失敗');
+                }
+            } catch (error) {
+                console.error('儲存抽獎紀錄失敗:', error);
+                alert('儲存失敗，請稍後再試');
+            }
         }
 
         function updateRemainingDisplay() {
-            const used = getUsedIndices();
-            const remaining = 6 - used.length;
+            const remaining = 6 - usedIndices.length;
             document.getElementById('remainingCount').textContent = remaining;
         }
 
-        function loadMysteryCards() {
+        function renderCards() {
             const grid = document.getElementById('flipGrid');
-            grid.innerHTML = ''; // 每次進入頁面重建，確保狀態正確
-            const used = getUsedIndices();
+            grid.innerHTML = '';
 
             mysteryCards.forEach((card, index) => {
                 const container = document.createElement('div');
                 container.className = 'flip-container';
                 container.dataset.cardIndex = index;
 
-                // 如果已使用過，直接顯示翻開狀態並加 used 樣式
-                if (used.includes(index)) {
+                if (usedIndices.includes(index)) {
                     container.classList.add('flipped', 'used');
                     container.innerHTML = `
                         <div class="flip-inner">
@@ -480,20 +495,18 @@
                             <div class="flip-back"><p>${card.back}</p></div>
                         </div>
                     `;
-                    // 只有未使用的卡片才能點擊翻轉（但需先通過密碼驗證）
-                    container.onclick = function(e) {
-                        if (this.classList.contains('used')) return;
-                        // 此處不直接翻轉，由 useRaffleCode 控制
-                        e.stopPropagation();
-                    };
                 }
                 grid.appendChild(container);
             });
             updateRemainingDisplay();
         }
 
-        // 使用密碼兌換抽獎機會
-        function useRaffleCode() {
+        async function loadMysteryCards() {
+            await loadRaffleData();
+            renderCards();
+        }
+
+        async function useRaffleCode() {
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
@@ -510,31 +523,25 @@
                 return;
             }
 
-            const used = getUsedIndices();
-            if (used.includes(codeIndex)) {
-                errorEl.textContent = '這個密碼已經使用過了！';
+            if (usedIndices.includes(codeIndex)) {
+                errorEl.textContent = '這個密碼已經被使用過了！';
                 return;
             }
 
-            // 標記為已使用
-            used.push(codeIndex);
-            setUsedIndices(used);
+            usedIndices.push(codeIndex);
+            await saveRaffleData();
 
-            // 翻開對應卡片
             const card = document.querySelector(`.flip-container[data-card-index="${codeIndex}"]`);
             if (card && !card.classList.contains('flipped')) {
                 card.classList.add('flipped');
                 card.classList.add('used');
-                card.onclick = null; // 移除點擊事件，防止重複操作
-                // 小彩帶特效
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
             }
 
             input.value = '';
             updateRemainingDisplay();
 
-            // 檢查是否全部抽完
-            if (used.length === 6) {
+            if (usedIndices.length === 6) {
                 setTimeout(() => {
                     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
                     alert('🎉 恭喜！所有神秘小卡都已被揭曉！');
