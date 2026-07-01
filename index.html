@@ -264,9 +264,7 @@
     </header>
 
     <div class="music-float" id="musicControl" onclick="toggleMusic()" title="生日歌">🎵</div>
-    <audio id="bgMusic" loop>
-        <source src="nastelbom-happy-birthday-471481.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" loop><source src="nastelbom-happy-birthday-471481.mp3" type="audio/mpeg"></audio>
 
     <div id="app">
         <div id="home" class="page active">
@@ -301,7 +299,7 @@
                 <p class="error-msg" id="raffleError"></p>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
                 <div class="flip-grid" id="flipGrid">
-                    <p style="text-align:center; width:100%; color:var(--secondary-text);">🔄 正在同步最新狀態…</p>
+                    <p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 載入中…</p>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                     <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
@@ -360,12 +358,25 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
+        // ====== 設定 ======
         const WORKER_URL = "https://sue.by-yanki.workers.dev";
-        
-        // 為 Cusdis 設置當前頁面網址
-        document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
+        const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
+        const mysteryCards = [
+            { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
+            { front: "🌟", back: "幸運星降臨：<br>今天會發生一件<br>讓你超開心的小事！" },
+            { front: "🎵", back: "專屬點歌：<br>為你點播一首<br>〈生日快樂〉<br>願旋律帶走所有煩惱" },
+            { front: "💌", back: "好友悄悄話：<br>認識你是大學<br>最幸運的事，<br>謝謝你一直以來的陪伴" },
+            { front: "✨", back: "願望成真卡：<br>對這張卡許願，<br>它會幫你把心願<br>偷偷告訴宇宙 ✨" },
+            { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
+        ];
 
-        // ---- Cusdis 高度自動調整 ----
+        // 全局狀態
+        let usedCodes = [];
+        let openedCards = [];
+        let pendingCodeIndex = -1;
+
+        // ====== 工具：Cusdis 高度調整 ======
+        document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
             if (!thread) return;
@@ -373,9 +384,7 @@
             if (iframe) {
                 iframe.style.height = '100%';
                 const containerHeight = thread.clientHeight;
-                if (containerHeight > 0) {
-                    iframe.style.height = containerHeight + 'px';
-                }
+                if (containerHeight > 0) iframe.style.height = containerHeight + 'px';
             }
         }
         const cusdisObserver = new MutationObserver((mutations) => {
@@ -396,180 +405,149 @@
             const thread = document.getElementById('cusdis_thread');
             if (thread) cusdisObserver.observe(thread, { childList: true, subtree: true });
         }
-
-        // 首次載入時啟動觀察
-        window.addEventListener('load', () => {
-            startObservingCusdis();
+        function onWishesPageActive() {
+            const thread = document.getElementById('cusdis_thread');
+            if (thread && !thread.querySelector('iframe')) startObservingCusdis();
             adjustCusdisHeight();
-            setTimeout(adjustCusdisHeight, 500);
-            setTimeout(adjustCusdisHeight, 1500);
-        });
+            setTimeout(adjustCusdisHeight, 300);
+            setTimeout(adjustCusdisHeight, 1000);
+        }
 
-        // ---- 抽獎密碼與卡片資料 ----
-        const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
-        const mysteryCards = [
-            { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
-            { front: "🌟", back: "幸運星降臨：<br>今天會發生一件<br>讓你超開心的小事！" },
-            { front: "🎵", back: "專屬點歌：<br>為你點播一首<br>〈生日快樂〉<br>願旋律帶走所有煩惱" },
-            { front: "💌", back: "好友悄悄話：<br>認識你是大學<br>最幸運的事，<br>謝謝你一直以來的陪伴" },
-            { front: "✨", back: "願望成真卡：<br>對這張卡許願，<br>它會幫你把心願<br>偷偷告訴宇宙 ✨" },
-            { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
-        ];
-
-        // 全域狀態（每次成功讀取後更新）
-        let usedCodes = [];
-        let openedCards = [];
-        let pendingCodeIndex = -1;   // 已驗證但尚未選擇卡片的密碼索引
-
-        // ---- 與 Worker 通訊（強制無緩存） ----
+        // ====== 從 Worker 讀取最新資料 ======
         async function loadRaffleData() {
-            const grid = document.getElementById('flipGrid');
             try {
                 const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
-                    method: 'GET',
                     cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
+                    headers: { 'Cache-Control': 'no-cache' }
                 });
-                if (!res.ok) throw new Error('Worker 回應異常');
+                if (!res.ok) throw new Error('讀取失敗');
                 const data = await res.json();
-                // 只有成功取得資料才更新全域變數
-                usedCodes = data.usedCodes || [];
-                openedCards = data.openedCards || [];
+                // 確保轉為陣列
+                usedCodes = Array.isArray(data.usedCodes) ? data.usedCodes : [];
+                openedCards = Array.isArray(data.openedCards) ? data.openedCards : [];
                 return true;
             } catch (e) {
                 console.error('讀取抽獎紀錄失敗', e);
-                if (grid && !openedCards.length && !usedCodes.length) {
-                    grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">⚠️ 無法取得抽獎紀錄，請檢查網路後點擊「刷新同步」</p>';
-                }
                 return false;
             }
         }
 
+        // ====== 儲存增量操作 ======
         async function saveOperation(useCode, openCard) {
             const res = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ useCode, openCard })
             });
             const result = await res.json();
             if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
-            return result;
         }
 
-        // ---- 渲染抽獎卡片（根據最新 openedCards） ----
+        // ====== 更新剩餘次數 ======
         function updateRemainingDisplay() {
-            // 剩餘次數 = 6 - 已翻開卡片數（更直覺，因為一密碼一卡片）
-            const remaining = 6 - openedCards.length;
-            const el = document.getElementById('remainingCount');
-            if (el) el.textContent = remaining;
+            const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
+            document.getElementById('remainingCount').textContent = remaining >= 0 ? remaining : 0;
         }
 
+        // ====== 渲染卡片 ======
         function renderCards() {
             const grid = document.getElementById('flipGrid');
             if (!grid) return;
             grid.innerHTML = '';
-
             mysteryCards.forEach((card, idx) => {
                 const container = document.createElement('div');
                 container.className = 'flip-container';
                 container.dataset.cardIndex = idx;
 
-                const innerHTML = `
-                    <div class="flip-inner">
-                        <div class="flip-front">${card.front}</div>
-                        <div class="flip-back"><p>${card.back}</p></div>
-                    </div>
-                `;
-
-                // 這張卡片已經被翻開過
                 if (openedCards.includes(idx)) {
                     container.classList.add('flipped', 'used');
-                    container.innerHTML = innerHTML;
-                    // 不添加 onclick，顯示為已使用
-                } 
-                // 未翻開，但當前有驗證成功的密碼等待選擇卡片
-                else if (pendingCodeIndex >= 0) {
-                    container.innerHTML = innerHTML;
+                    container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
+                } else if (pendingCodeIndex >= 0) {
+                    container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
                     container.onclick = () => pickCard(idx);
-                } 
-                // 未翻開，且無待選狀態（不能點）
-                else {
-                    container.innerHTML = innerHTML;
-                    // 無 onclick
+                } else {
+                    container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
                 }
-
                 grid.appendChild(container);
             });
-
             updateRemainingDisplay();
         }
 
-        // ---- 密碼驗證 ----
+        // ====== 進入抽獎頁面時載入並渲染 ======
+        async function loadMysteryCards() {
+            const grid = document.getElementById('flipGrid');
+            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 同步最新狀態…</p>';
+            const ok = await loadRaffleData();
+            if (ok) {
+                pendingCodeIndex = -1;
+                document.getElementById('pickHint').hidden = true;
+                renderCards();
+            } else {
+                grid.innerHTML = '<p style="color: #e74c3c; text-align: center;">無法取得抽獎紀錄，請檢查網路後點擊刷新</p>';
+            }
+        }
+
+        // ====== 驗證密碼 ======
         async function submitCode() {
-            // 先同步最新狀態（確保沒有別人剛剛抽走）
-            await loadRaffleData();
-            
+            await loadRaffleData(); // 先拿最新狀態
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
             errorEl.textContent = '';
 
-            if (!code) {
-                errorEl.textContent = '請輸入密碼';
-                return;
-            }
+            if (!code) { errorEl.textContent = '請輸入密碼'; return; }
             const idx = raffleCodes.indexOf(code);
-            if (idx === -1) {
-                errorEl.textContent = '密碼無效';
-                return;
-            }
-            if (usedCodes.includes(idx)) {
-                errorEl.textContent = '此密碼已被使用過';
-                return;
-            }
-            if (openedCards.length >= 6) {
-                errorEl.textContent = '所有卡片都已被翻開';
-                return;
-            }
+            if (idx === -1) { errorEl.textContent = '密碼無效'; return; }
+            if (usedCodes.includes(idx)) { errorEl.textContent = '密碼已被使用'; return; }
+            if (openedCards.length >= 6) { errorEl.textContent = '卡片已全開'; return; }
 
-            // 驗證成功，進入選牌模式
             pendingCodeIndex = idx;
             input.value = '';
             document.getElementById('pickHint').hidden = false;
-            renderCards();  // 重新渲染，讓未翻開的卡片可點選
+            renderCards();
         }
 
+        // ====== 選擇卡片 ======
         async function pickCard(cardIdx) {
             if (pendingCodeIndex < 0) return;
             if (openedCards.includes(cardIdx)) return;
-
             const errorEl = document.getElementById('raffleError');
+
             try {
                 await saveOperation(pendingCodeIndex, cardIdx);
             } catch (e) {
-                errorEl.textContent = '儲存失敗，請稍後再試：' + e.message;
+                errorEl.textContent = '儲存失敗: ' + e.message;
                 return;
             }
 
-            // 儲存成功，重新讀取最新狀態（確認同步）
+            // 儲存成功後立即重新讀取最新狀態
             await loadRaffleData();
-            // 清除待選狀態
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
-            
-            // 重新渲染，讓卡片顯示為翻開
             renderCards();
 
-            // 撒花
-            confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
+            // 觸發翻牌特效
+            const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
+            if (card) {
+                card.classList.add('flipped', 'used');
+                card.onclick = null;
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
+            }
 
             if (openedCards.length === 6) {
                 setTimeout(() => {
@@ -579,94 +557,18 @@
             }
         }
 
-        // 公開的加載函數，用於點擊刷新按鈕或切換頁面時
-        async function loadMysteryCards() {
-            const grid = document.getElementById('flipGrid');
-            if (grid) grid.innerHTML = '<p style="text-align:center; width:100%; color:var(--secondary-text);">🔄 正在同步最新狀態…</p>';
+        // ====== 頁面切換覆蓋 ======
+        const originalShowPage = showPage;
+        showPage = function(pageId) {
+            originalShowPage(pageId);
+            if (pageId === 'wishes') onWishesPageActive();
+            if (pageId === 'mystery') loadMysteryCards();
+        };
 
-            const success = await loadRaffleData();
-            if (success || openedCards.length > 0 || usedCodes.length > 0) {
-                // 無論成敗，只要有舊資料就繼續渲染
-                pendingCodeIndex = -1;   // 換頁時清除待選狀態
-                document.getElementById('pickHint').hidden = true;
-                renderCards();
-            } else {
-                // 完全沒有資料且讀取失敗，保留提示訊息
-                if (grid) grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">⚠️ 無法取得抽獎紀錄，請檢查網路後點擊「刷新同步」</p>';
-                document.getElementById('remainingCount').textContent = '?';
-            }
-        }
-
-        // ---- 頁面切換邏輯 ----
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(pageId);
-            if (target) target.classList.add('active');
-
-            if (pageId === 'home') {
-                startTextAnimation();
-            } else if (pageId === 'wishes') {
-                // 確保 Cusdis 正確載入與調整高度
-                startObservingCusdis();
-                adjustCusdisHeight();
-                setTimeout(adjustCusdisHeight, 300);
-                setTimeout(adjustCusdisHeight, 1000);
-            } else if (pageId === 'mystery') {
-                // 每次進入抽獎頁面都強制從 Worker 讀取最新狀態
-                loadMysteryCards();
-            }
-            // card 頁面由密碼流程控制，不需要額外處理
-        }
-
-        // ---- 首頁動畫 ----
-        function startTextAnimation() {
-            const container = document.getElementById('animatedText');
-            const message = "Susan, Happy Birthday!";
-            container.innerHTML = '';
-            [...message].forEach((char, index) => {
-                const span = document.createElement('span');
-                span.textContent = char;
-                span.style.animationDelay = (index * 0.12) + 's';
-                container.appendChild(span);
-            });
-            setTimeout(() => {
-                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-            }, (message.length * 0.12 + 0.6) * 1000);
-        }
-
-        // ---- 卡片密碼保護 ----
+        // ====== 其他功能（動畫、密碼卡片等） ======
         const correctPassword = "201076";
         let passwordVerified = false;
 
-        function showCardWithPassword() {
-            if (passwordVerified) {
-                showPage('card');
-            } else {
-                document.getElementById('passwordModal').style.display = 'flex';
-                document.getElementById('pwdInput').value = '';
-                document.getElementById('pwdError').textContent = '';
-            }
-        }
-
-        function checkPassword() {
-            if (document.getElementById('pwdInput').value.trim() === correctPassword) {
-                passwordVerified = true;
-                document.getElementById('passwordModal').style.display = 'none';
-                showPage('card');
-            } else {
-                document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
-            }
-        }
-
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) this.style.display = 'none';
-        });
-
-        function flipCard() {
-            document.getElementById('birthdayCard').classList.toggle('flipped');
-        }
-
-        // ---- 背景愛心 ----
         function createHearts() {
             const container = document.getElementById('heartsContainer');
             const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
@@ -683,7 +585,52 @@
         }
         createHearts();
 
-        // ---- 音樂控制 ----
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if (pageId === 'home') startTextAnimation();
+            if (pageId === 'mystery') loadMysteryCards();
+        }
+
+        function startTextAnimation() {
+            const container = document.getElementById('animatedText');
+            const message = "Susan, Happy Birthday!";
+            container.innerHTML = '';
+            [...message].forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.animationDelay = (index * 0.12) + 's';
+                container.appendChild(span);
+            });
+            setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), (message.length * 0.12 + 0.6) * 1000);
+        }
+
+        function showCardWithPassword() {
+            if (passwordVerified) showPage('card');
+            else {
+                document.getElementById('passwordModal').style.display = 'flex';
+                document.getElementById('pwdInput').value = '';
+                document.getElementById('pwdError').textContent = '';
+            }
+        }
+
+        function checkPassword() {
+            if (document.getElementById('pwdInput').value.trim() === correctPassword) {
+                passwordVerified = true;
+                document.getElementById('passwordModal').style.display = 'none';
+                showPage('card');
+            } else {
+                document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
+            }
+        }
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+
+        function flipCard() {
+            document.getElementById('birthdayCard').classList.toggle('flipped');
+        }
+
         const bgMusic = document.getElementById('bgMusic');
         let musicPlaying = false;
         function toggleMusic() {
@@ -696,7 +643,6 @@
             }
             musicPlaying = !musicPlaying;
         }
-        // 首次點擊頁面任意處嘗試自動播放（符合瀏覽器政策）
         document.body.addEventListener('click', function initAudio() {
             if (!musicPlaying) {
                 bgMusic.play().then(() => {
@@ -706,12 +652,14 @@
             }
         }, { once: true });
 
-        // 預加載抽獎數據（背景執行，不影響首頁顯示）
         window.addEventListener('load', () => {
-            loadRaffleData().then(() => {
-                // 如果用戶快速切到抽獎頁面，renderCards 會再被 loadMysteryCards 觸發
-                // 這裡只是預熱數據
-            });
+            startObservingCusdis();
+            adjustCusdisHeight();
+            setTimeout(adjustCusdisHeight, 500);
+            setTimeout(adjustCusdisHeight, 1500);
+            startTextAnimation();
+            // 預先載入抽獎資料
+            loadRaffleData();
         });
     </script>
 </body>
