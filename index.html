@@ -201,6 +201,12 @@
             color: #5d4a4a;
         }
 
+        /* 已抽過的卡片半透明提示 */
+        .flip-container.used {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
         .wechat-notice {
             background: #fff3f3;
             border: 1px solid #ffcdd2;
@@ -240,7 +246,6 @@
 <body>
     <div class="hearts-container" id="heartsContainer"></div>
 
-    <!-- 頂部導航 -->
     <header class="top-bar">
         <div class="site-title">🌸 Susan's Day</div>
         <nav class="nav-stories">
@@ -253,7 +258,7 @@
                 <span class="story-label">檔案</span>
             </div>
             <div class="story-item" onclick="showPage('mystery')">
-                <div class="story-ring"><i class="fas fa-gem"></i></div> <!-- 鑽石圖標，代表神秘抽獎 -->
+                <div class="story-ring"><i class="fas fa-gem"></i></div>
                 <span class="story-label">抽獎</span>
             </div>
             <div class="story-item" onclick="showPage('wishes')">
@@ -271,13 +276,11 @@
     <audio id="bgMusic" loop><source src="nastelbom-happy-birthday-471481.mp3" type="audio/mpeg"></audio>
 
     <div id="app">
-        <!-- 主頁 -->
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
             <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
         </div>
 
-        <!-- 個人檔案 -->
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
                 <img src="IMG_2411.jpeg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
@@ -292,18 +295,25 @@
             </div>
         </div>
 
-        <!-- 神秘翻牌抽獎牆（取代原本回憶牆） -->
+        <!-- 抽獎頁面 -->
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 神秘小卡（點擊翻轉）</h3>
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 密碼兌換抽獎（每人限一次）</h3>
                 <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
-                    每張卡片背後都有不同的彩蛋或祝福 💖
+                    輸入你的專屬密碼，翻開一張神秘小卡 💖
                 </p>
+                <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
+                    <input type="password" id="rafflePwdInput" placeholder="輸入抽獎密碼" maxlength="20" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:20px; font-size:0.9rem;">
+                    <button class="ins-btn" onclick="useRaffleCode()">抽獎</button>
+                </div>
+                <p class="error-msg" id="raffleError"></p>
                 <div class="flip-grid" id="flipGrid"></div>
+                <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">
+                    剩餘可抽次數：<strong id="remainingCount">6</strong>
+                </p>
             </div>
         </div>
 
-        <!-- 祝福留言板 -->
         <div id="wishes" class="page">
             <div class="ins-card">
                 <h3 style="font-weight: 500;">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
@@ -319,7 +329,6 @@
             </div>
         </div>
 
-        <!-- 秘密生日卡 -->
         <div id="card" class="page">
             <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
                 <div class="card-container" onclick="flipCard()">
@@ -342,7 +351,7 @@
         </div>
     </div>
 
-    <!-- 密碼彈窗 -->
+    <!-- 密碼彈窗（生日卡） -->
     <div class="modal-overlay" id="passwordModal" style="display: none;">
         <div class="modal">
             <h3>🔐 輸入密碼打開卡片</h3>
@@ -354,10 +363,8 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // 動態填入當前網址
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
-        // Cusdis 高度調整（保持原本邏輯）
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
             if (!thread) return;
@@ -410,7 +417,18 @@
             setTimeout(adjustCusdisHeight, 1000);
         }
 
-        // ===== 翻牌卡片內容（可自行編輯） =====
+        // ===== 抽獎系統設定 =====
+        // 六組自訂密碼（可自行修改）
+        const raffleCodes = [
+            "SUSAN0706",
+            "BIRTHDAY",
+            "HAPPY",
+            "LOVEU",
+            "SURPRISE",
+            "CAKE"
+        ];
+
+        // 六張卡片內容（對應上面密碼順序）
         const mysteryCards = [
             { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
             { front: "🌟", back: "幸運星降臨：<br>今天會發生一件<br>讓你超開心的小事！" },
@@ -420,28 +438,110 @@
             { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
         ];
 
+        // 用 localStorage 記錄已使用的密碼索引（跨重整保留）
+        function getUsedIndices() {
+            const stored = localStorage.getItem('raffleUsedIndices');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function setUsedIndices(indices) {
+            localStorage.setItem('raffleUsedIndices', JSON.stringify(indices));
+        }
+
+        function updateRemainingDisplay() {
+            const used = getUsedIndices();
+            const remaining = 6 - used.length;
+            document.getElementById('remainingCount').textContent = remaining;
+        }
+
         function loadMysteryCards() {
             const grid = document.getElementById('flipGrid');
-            if (grid.children.length > 0) return; // 避免重複載入
+            grid.innerHTML = ''; // 每次進入頁面重建，確保狀態正確
+            const used = getUsedIndices();
+
             mysteryCards.forEach((card, index) => {
                 const container = document.createElement('div');
                 container.className = 'flip-container';
-                container.onclick = function(e) {
-                    // 點擊翻轉
-                    this.classList.toggle('flipped');
-                    e.stopPropagation();
-                };
-                container.innerHTML = `
-                    <div class="flip-inner">
-                        <div class="flip-front">${card.front}</div>
-                        <div class="flip-back"><p>${card.back}</p></div>
-                    </div>
-                `;
+                container.dataset.cardIndex = index;
+
+                // 如果已使用過，直接顯示翻開狀態並加 used 樣式
+                if (used.includes(index)) {
+                    container.classList.add('flipped', 'used');
+                    container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
+                    // 只有未使用的卡片才能點擊翻轉（但需先通過密碼驗證）
+                    container.onclick = function(e) {
+                        if (this.classList.contains('used')) return;
+                        // 此處不直接翻轉，由 useRaffleCode 控制
+                        e.stopPropagation();
+                    };
+                }
                 grid.appendChild(container);
             });
+            updateRemainingDisplay();
         }
 
-        // 覆寫 showPage，加入抽獎頁面載入邏輯
+        // 使用密碼兌換抽獎機會
+        function useRaffleCode() {
+            const input = document.getElementById('rafflePwdInput');
+            const errorEl = document.getElementById('raffleError');
+            const code = input.value.trim();
+            errorEl.textContent = '';
+
+            if (!code) {
+                errorEl.textContent = '請輸入密碼';
+                return;
+            }
+
+            const codeIndex = raffleCodes.indexOf(code);
+            if (codeIndex === -1) {
+                errorEl.textContent = '密碼無效，請再試一次';
+                return;
+            }
+
+            const used = getUsedIndices();
+            if (used.includes(codeIndex)) {
+                errorEl.textContent = '這個密碼已經使用過了！';
+                return;
+            }
+
+            // 標記為已使用
+            used.push(codeIndex);
+            setUsedIndices(used);
+
+            // 翻開對應卡片
+            const card = document.querySelector(`.flip-container[data-card-index="${codeIndex}"]`);
+            if (card && !card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                card.classList.add('used');
+                card.onclick = null; // 移除點擊事件，防止重複操作
+                // 小彩帶特效
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
+            }
+
+            input.value = '';
+            updateRemainingDisplay();
+
+            // 檢查是否全部抽完
+            if (used.length === 6) {
+                setTimeout(() => {
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                    alert('🎉 恭喜！所有神秘小卡都已被揭曉！');
+                }, 500);
+            }
+        }
+
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
@@ -453,7 +553,6 @@
             }
         };
 
-        // ===== 以下為原有功能（密碼、動畫等） =====
         const correctPassword = "201076";
         let passwordVerified = false;
 
