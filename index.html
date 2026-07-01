@@ -400,6 +400,8 @@
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
+            // 预加载抽奖数据，确保进入抽奖页时能立刻显示
+            loadRaffleData();
         });
 
         function onWishesPageActive() {
@@ -438,6 +440,7 @@
                 openedCards = data.openedCards || [];
             } catch (e) {
                 console.error('讀取失敗', e);
+                // 如果讀取失敗，保持舊資料不變，避免清空已顯示的狀態
             }
         }
 
@@ -535,7 +538,6 @@
                 return;
             }
 
-            // 儲存成功，重新讀取最新狀態
             await loadRaffleData();
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
