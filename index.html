@@ -299,9 +299,12 @@
                 <p class="error-msg" id="raffleError"></p>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
                 <div class="flip-grid" id="flipGrid"></div>
-                <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">
-                    剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
-                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
+                        剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
+                    </p>
+                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新</button>
+                </div>
             </div>
         </div>
 
@@ -353,7 +356,7 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ========== 使用 Worker 代理（Token 安全隱藏） ==========
+        // ========== Worker 網址 ==========
         const WORKER_URL = "https://shbd.by-yanki.workers.dev";
 
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
@@ -424,9 +427,10 @@
         let openedCards = [];
         let pendingCodeIndex = -1;
 
+        // 從 Worker 讀取最新資料（強制不使用快取）
         async function loadRaffleData() {
             try {
-                const response = await fetch(`${WORKER_URL}/read`);
+                const response = await fetch(`${WORKER_URL}/read?t=${Date.now()}`);
                 if (!response.ok) throw new Error('讀取失敗');
                 const data = await response.json();
                 usedCodes = data.usedCodes || [];
@@ -438,6 +442,7 @@
             }
         }
 
+        // 儲存到 Worker
         async function saveRaffleData() {
             const payload = {
                 usedCodes: usedCodes,
@@ -449,7 +454,7 @@
                 body: JSON.stringify(payload)
             });
             if (!response.ok) {
-                throw new Error('儲存失敗');
+                throw new Error('儲存失敗，HTTP ' + response.status);
             }
         }
 
@@ -462,6 +467,7 @@
 
         function renderCards() {
             const grid = document.getElementById('flipGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             mysteryCards.forEach((card, index) => {
@@ -501,6 +507,7 @@
             updateRemainingDisplay();
         }
 
+        // 每次進入抽獎頁面都重新讀取 + 渲染
         async function loadMysteryCards() {
             await loadRaffleData();
             pendingCodeIndex = -1;
@@ -509,6 +516,9 @@
         }
 
         async function submitCode() {
+            // 先確保資料是最新的
+            await loadRaffleData();
+            
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
@@ -561,17 +571,18 @@
                 return;
             }
 
+            // 儲存成功後重新渲染
+            pendingCodeIndex = -1;
+            document.getElementById('pickHint').hidden = true;
+            renderCards();
+
+            // 翻開動畫
             const card = document.querySelector(`.flip-container[data-card-index="${cardIndex}"]`);
-            if (card && !card.classList.contains('flipped')) {
-                card.classList.add('flipped');
-                card.classList.add('used');
+            if (card) {
+                card.classList.add('flipped', 'used');
                 card.onclick = null;
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
             }
-
-            pendingCodeIndex = -1;
-            document.getElementById('pickHint').hidden = true;
-            updateRemainingDisplay();
 
             if (openedCards.length === 6) {
                 setTimeout(() => {
@@ -581,6 +592,7 @@
             }
         }
 
+        // 覆蓋 showPage 以處理頁面切換
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
