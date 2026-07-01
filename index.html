@@ -299,11 +299,11 @@
                 <p class="error-msg" id="raffleError"></p>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
                 <div class="flip-grid" id="flipGrid">
-                    <p style="color: var(--secondary-text); text-align: center; width: 100%;">同步中，請稍候…</p>
+                    <p style="text-align:center; width:100%; color:var(--secondary-text);">🔄 正在同步最新狀態…</p>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                     <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
-                        剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
+                        剩餘可抽次數：<strong id="remainingCount">…</strong>
                     </p>
                     <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新同步</button>
                 </div>
@@ -362,6 +362,7 @@
 
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
+        // Cusdis 高度调整
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
             if (!thread) return;
@@ -374,7 +375,6 @@
                 }
             }
         }
-
         const cusdisObserver = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.addedNodes.length > 0) {
@@ -389,33 +389,34 @@
                 }
             }
         });
-
         function startObservingCusdis() {
             const thread = document.getElementById('cusdis_thread');
-            if (thread) {
-                cusdisObserver.observe(thread, { childList: true, subtree: true });
-            }
+            if (thread) cusdisObserver.observe(thread, { childList: true, subtree: true });
         }
 
+        // 初始化
         window.addEventListener('load', () => {
             startObservingCusdis();
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
-            // 预先拉取数据，这样进入抽奖页时更快
-            loadRaffleData();
+            // 预加载抽奖数据
+            loadRaffleData().then(() => {
+                if (document.getElementById('mystery').classList.contains('active')) {
+                    renderCards();
+                }
+            });
         });
 
         function onWishesPageActive() {
             const thread = document.getElementById('cusdis_thread');
-            if (thread && !thread.querySelector('iframe')) {
-                startObservingCusdis();
-            }
+            if (thread && !thread.querySelector('iframe')) startObservingCusdis();
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 300);
             setTimeout(adjustCusdisHeight, 1000);
         }
 
+        // 抽奖逻辑
         const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
         const mysteryCards = [
             { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
@@ -430,26 +431,27 @@
         let openedCards = [];
         let pendingCodeIndex = -1;
 
+        // 从 Worker 加载最新数据
         async function loadRaffleData() {
             try {
                 const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
                     cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache' }
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
                 });
                 if (!res.ok) throw new Error('讀取失敗');
                 const data = await res.json();
                 usedCodes = data.usedCodes || [];
                 openedCards = data.openedCards || [];
+                return true;
             } catch (e) {
                 console.error('讀取抽獎紀錄失敗', e);
-                // 失败时不清空已有数据，并展示错误信息
                 const grid = document.getElementById('flipGrid');
-                if (grid) {
-                    grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">無法取得抽獎紀錄，請確認網路後刷新</p>';
-                }
+                if (grid) grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">無法取得抽獎紀錄，請確認網路後點擊刷新</p>';
+                return false;
             }
         }
 
+        // 保存增量操作
         async function saveOperation(useCode, openCard) {
             const res = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
@@ -457,9 +459,7 @@
                 body: JSON.stringify({ useCode, openCard })
             });
             const result = await res.json();
-            if (!res.ok || result.error) {
-                throw new Error(result.error || '儲存失敗');
-            }
+            if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
         }
 
         function updateRemainingDisplay() {
@@ -471,12 +471,10 @@
             const grid = document.getElementById('flipGrid');
             if (!grid) return;
             grid.innerHTML = '';
-
             mysteryCards.forEach((card, idx) => {
                 const container = document.createElement('div');
                 container.className = 'flip-container';
                 container.dataset.cardIndex = idx;
-
                 if (openedCards.includes(idx)) {
                     container.classList.add('flipped', 'used');
                     container.innerHTML = `
@@ -506,14 +504,16 @@
             updateRemainingDisplay();
         }
 
+        // 进入抽奖页时调用
         async function loadMysteryCards() {
-            // 显示加载中
             const grid = document.getElementById('flipGrid');
-            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">同步中，請稍候…</p>';
-            await loadRaffleData();
-            pendingCodeIndex = -1;
-            document.getElementById('pickHint').hidden = true;
-            renderCards();
+            if (grid) grid.innerHTML = '<p style="text-align:center; width:100%; color:var(--secondary-text);">🔄 正在同步最新狀態…</p>';
+            const ok = await loadRaffleData();
+            if (ok) {
+                pendingCodeIndex = -1;
+                document.getElementById('pickHint').hidden = true;
+                renderCards();
+            }
         }
 
         async function submitCode() {
@@ -522,13 +522,11 @@
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
             errorEl.textContent = '';
-
             if (!code) { errorEl.textContent = '請輸入密碼'; return; }
             const idx = raffleCodes.indexOf(code);
             if (idx === -1) { errorEl.textContent = '密碼無效'; return; }
             if (usedCodes.includes(idx)) { errorEl.textContent = '密碼已被使用'; return; }
             if (openedCards.length >= 6) { errorEl.textContent = '卡片已全開'; return; }
-
             pendingCodeIndex = idx;
             input.value = '';
             document.getElementById('pickHint').hidden = false;
@@ -539,26 +537,22 @@
             if (pendingCodeIndex < 0) return;
             if (openedCards.includes(cardIdx)) return;
             const errorEl = document.getElementById('raffleError');
-
             try {
                 await saveOperation(pendingCodeIndex, cardIdx);
             } catch (e) {
                 errorEl.textContent = '儲存失敗: ' + e.message;
                 return;
             }
-
             await loadRaffleData();
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
             renderCards();
-
             const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
             if (card) {
                 card.classList.add('flipped', 'used');
                 card.onclick = null;
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
             }
-
             if (openedCards.length === 6) {
                 setTimeout(() => {
                     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
@@ -567,6 +561,7 @@
             }
         }
 
+        // 覆盖 showPage，确保进入抽奖页时同步
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
@@ -574,6 +569,7 @@
             if (pageId === 'mystery') loadMysteryCards();
         };
 
+        // 其他功能
         const correctPassword = "201076";
         let passwordVerified = false;
 
@@ -631,7 +627,6 @@
                 document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
             }
         }
-
         document.getElementById('passwordModal').addEventListener('click', function(e) {
             if (e.target === this) this.style.display = 'none';
         });
@@ -660,11 +655,6 @@
                 }).catch(() => {});
             }
         }, { once: true });
-
-        window.addEventListener('load', () => {
-            startTextAnimation();
-            if (document.getElementById('wishes').classList.contains('active')) onWishesPageActive();
-        });
     </script>
 </body>
 </html>
