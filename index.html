@@ -353,10 +353,8 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ========== 你的 Secret Gist 和新 Token（已更新） ==========
-        const GIST_RAW_URL = "https://gist.githubusercontent.com/1119Mush/6c0a78940800bf69aadf0765290db5db/raw/de491f4e6e703b183552e8b08419f4b2dca78ee1/raffle-data.json";
-        const GIST_API_URL = "https://api.github.com/gists/6c0a78940800bf69aadf0765290db5db";
-        const GITHUB_TOKEN = "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";
+        // ========== 使用 Worker 代理（Token 安全隱藏） ==========
+        const WORKER_URL = "https://shbd.by-yanki.workers.dev";
 
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
 
@@ -428,7 +426,7 @@
 
         async function loadRaffleData() {
             try {
-                const response = await fetch(GIST_RAW_URL);
+                const response = await fetch(`${WORKER_URL}/read`);
                 if (!response.ok) throw new Error('讀取失敗');
                 const data = await response.json();
                 usedCodes = data.usedCodes || [];
@@ -445,23 +443,13 @@
                 usedCodes: usedCodes,
                 openedCards: openedCards
             };
-            const response = await fetch(GIST_API_URL, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    files: {
-                        'raffle-data.json': {
-                            content: JSON.stringify(payload)
-                        }
-                    }
-                })
+            const response = await fetch(`${WORKER_URL}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error('更新失敗: ' + response.status + ' ' + errorText);
+                throw new Error('儲存失敗');
             }
         }
 
@@ -568,7 +556,7 @@
             } catch (error) {
                 usedCodes.pop();
                 openedCards.pop();
-                errorEl.textContent = '儲存失敗，請稍後再試。請確認 GitHub Token 仍有效且有 gist 權限。';
+                errorEl.textContent = '儲存失敗，請稍後再試';
                 console.error(error);
                 return;
             }
