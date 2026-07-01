@@ -370,12 +370,12 @@
             { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
         ];
 
-        // 全局狀態
+        // 全域狀態
         let usedCodes = [];
         let openedCards = [];
         let pendingCodeIndex = -1;
 
-        // ====== 工具：Cusdis 高度調整 ======
+        // ====== Cusdis 高度調整 ======
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
@@ -416,23 +416,26 @@
         // ====== 從 Worker 讀取最新資料 ======
         async function loadRaffleData() {
             try {
+                console.log('開始讀取抽獎資料...');
                 const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
                     cache: 'no-store',
                     headers: { 'Cache-Control': 'no-cache' }
                 });
-                if (!res.ok) throw new Error('讀取失敗');
-                const data = await res.json();
-                // 確保轉為陣列
+                console.log('Worker 回應狀態:', res.status);
+                if (!res.ok) throw new Error(`伺服器錯誤 ${res.status}`);
+                const text = await res.text();
+                console.log('Worker 回應內容:', text);
+                const data = JSON.parse(text);
                 usedCodes = Array.isArray(data.usedCodes) ? data.usedCodes : [];
                 openedCards = Array.isArray(data.openedCards) ? data.openedCards : [];
+                console.log('解析後的 usedCodes:', usedCodes, 'openedCards:', openedCards);
                 return true;
             } catch (e) {
-                console.error('讀取抽獎紀錄失敗', e);
+                console.error('讀取抽獎紀錄失敗:', e);
                 return false;
             }
         }
 
-        // ====== 儲存增量操作 ======
         async function saveOperation(useCode, openCard) {
             const res = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
@@ -443,13 +446,11 @@
             if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
         }
 
-        // ====== 更新剩餘次數 ======
         function updateRemainingDisplay() {
             const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
             document.getElementById('remainingCount').textContent = remaining >= 0 ? remaining : 0;
         }
 
-        // ====== 渲染卡片 ======
         function renderCards() {
             const grid = document.getElementById('flipGrid');
             if (!grid) return;
@@ -488,7 +489,6 @@
             updateRemainingDisplay();
         }
 
-        // ====== 進入抽獎頁面時載入並渲染 ======
         async function loadMysteryCards() {
             const grid = document.getElementById('flipGrid');
             if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 同步最新狀態…</p>';
@@ -498,13 +498,12 @@
                 document.getElementById('pickHint').hidden = true;
                 renderCards();
             } else {
-                grid.innerHTML = '<p style="color: #e74c3c; text-align: center;">無法取得抽獎紀錄，請檢查網路後點擊刷新</p>';
+                if (grid) grid.innerHTML = '<p style="color: #e74c3c; text-align: center;">無法取得抽獎紀錄，請檢查網路後刷新</p>';
             }
         }
 
-        // ====== 驗證密碼 ======
         async function submitCode() {
-            await loadRaffleData(); // 先拿最新狀態
+            await loadRaffleData();
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
@@ -522,7 +521,6 @@
             renderCards();
         }
 
-        // ====== 選擇卡片 ======
         async function pickCard(cardIdx) {
             if (pendingCodeIndex < 0) return;
             if (openedCards.includes(cardIdx)) return;
@@ -535,13 +533,11 @@
                 return;
             }
 
-            // 儲存成功後立即重新讀取最新狀態
             await loadRaffleData();
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
             renderCards();
 
-            // 觸發翻牌特效
             const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
             if (card) {
                 card.classList.add('flipped', 'used');
@@ -557,7 +553,6 @@
             }
         }
 
-        // ====== 頁面切換覆蓋 ======
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
@@ -565,7 +560,7 @@
             if (pageId === 'mystery') loadMysteryCards();
         };
 
-        // ====== 其他功能（動畫、密碼卡片等） ======
+        // ====== 主頁動畫、密碼卡片等 ======
         const correctPassword = "201076";
         let passwordVerified = false;
 
@@ -594,6 +589,7 @@
 
         function startTextAnimation() {
             const container = document.getElementById('animatedText');
+            if (!container) return;
             const message = "Susan, Happy Birthday!";
             container.innerHTML = '';
             [...message].forEach((char, index) => {
@@ -602,7 +598,10 @@
                 span.style.animationDelay = (index * 0.12) + 's';
                 container.appendChild(span);
             });
-            setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), (message.length * 0.12 + 0.6) * 1000);
+            const totalDuration = (message.length * 0.12 + 0.6) * 1000;
+            setTimeout(() => {
+                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+            }, totalDuration);
         }
 
         function showCardWithPassword() {
@@ -652,14 +651,17 @@
             }
         }, { once: true });
 
+        // ====== 初始化 ======
         window.addEventListener('load', () => {
+            // 優先執行主頁動畫
+            startTextAnimation();
+            // Cusdis 初始化
             startObservingCusdis();
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
-            startTextAnimation();
-            // 預先載入抽獎資料
-            loadRaffleData();
+            // 背景載入抽獎資料（不影響主頁）
+            loadRaffleData().catch(() => {});
         });
     </script>
 </body>
