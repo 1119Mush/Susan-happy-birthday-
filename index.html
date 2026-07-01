@@ -298,7 +298,9 @@
                 </div>
                 <p class="error-msg" id="raffleError"></p>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
-                <div class="flip-grid" id="flipGrid"></div>
+                <div class="flip-grid" id="flipGrid">
+                    <p style="color: var(--secondary-text); text-align: center; width: 100%;">同步中，請稍候…</p>
+                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                     <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
                         剩餘可抽次數：<strong id="remainingCount">載入中...</strong>
@@ -400,7 +402,7 @@
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
-            // 预加载抽奖数据，确保进入抽奖页时能立刻显示
+            // 预先拉取数据，这样进入抽奖页时更快
             loadRaffleData();
         });
 
@@ -439,8 +441,12 @@
                 usedCodes = data.usedCodes || [];
                 openedCards = data.openedCards || [];
             } catch (e) {
-                console.error('讀取失敗', e);
-                // 如果讀取失敗，保持舊資料不變，避免清空已顯示的狀態
+                console.error('讀取抽獎紀錄失敗', e);
+                // 失败时不清空已有数据，并展示错误信息
+                const grid = document.getElementById('flipGrid');
+                if (grid) {
+                    grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">無法取得抽獎紀錄，請確認網路後刷新</p>';
+                }
             }
         }
 
@@ -501,6 +507,9 @@
         }
 
         async function loadMysteryCards() {
+            // 显示加载中
+            const grid = document.getElementById('flipGrid');
+            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">同步中，請稍候…</p>';
             await loadRaffleData();
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
