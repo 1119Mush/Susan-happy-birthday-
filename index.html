@@ -358,7 +358,6 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ====== 設定 ======
         const WORKER_URL = "https://sue.by-yanki.workers.dev";
         const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
         const mysteryCards = [
@@ -375,7 +374,7 @@
         let openedCards = [];
         let pendingCodeIndex = -1;
 
-        // ====== Cusdis 高度調整 ======
+        // Cusdis 高度處理
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
         function adjustCusdisHeight() {
             const thread = document.getElementById('cusdis_thread');
@@ -413,29 +412,22 @@
             setTimeout(adjustCusdisHeight, 1000);
         }
 
-        // ====== 從 Worker 讀取最新資料 ======
+        // 讀取抽獎資料
         async function loadRaffleData() {
             try {
-                console.log('開始讀取抽獎資料...');
-                const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
-                console.log('Worker 回應狀態:', res.status);
-                if (!res.ok) throw new Error(`伺服器錯誤 ${res.status}`);
-                const text = await res.text();
-                console.log('Worker 回應內容:', text);
-                const data = JSON.parse(text);
+                const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
                 usedCodes = Array.isArray(data.usedCodes) ? data.usedCodes : [];
                 openedCards = Array.isArray(data.openedCards) ? data.openedCards : [];
-                console.log('解析後的 usedCodes:', usedCodes, 'openedCards:', openedCards);
                 return true;
             } catch (e) {
-                console.error('讀取抽獎紀錄失敗:', e);
+                console.error('讀取失敗:', e);
                 return false;
             }
         }
 
+        // 儲存增量
         async function saveOperation(useCode, openCard) {
             const res = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
@@ -446,11 +438,13 @@
             if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
         }
 
+        // 更新剩餘次數
         function updateRemainingDisplay() {
             const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
             document.getElementById('remainingCount').textContent = remaining >= 0 ? remaining : 0;
         }
 
+        // 渲染卡片
         function renderCards() {
             const grid = document.getElementById('flipGrid');
             if (!grid) return;
@@ -489,19 +483,21 @@
             updateRemainingDisplay();
         }
 
+        // 進入抽獎頁
         async function loadMysteryCards() {
             const grid = document.getElementById('flipGrid');
-            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 同步最新狀態…</p>';
+            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 連線中…</p>';
             const ok = await loadRaffleData();
             if (ok) {
                 pendingCodeIndex = -1;
                 document.getElementById('pickHint').hidden = true;
                 renderCards();
             } else {
-                if (grid) grid.innerHTML = '<p style="color: #e74c3c; text-align: center;">無法取得抽獎紀錄，請檢查網路後刷新</p>';
+                if (grid) grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">⚠️ 讀取失敗，請點擊「刷新同步」重試</p>';
             }
         }
 
+        // 驗證密碼
         async function submitCode() {
             await loadRaffleData();
             const input = document.getElementById('rafflePwdInput');
@@ -521,6 +517,7 @@
             renderCards();
         }
 
+        // 選擇卡片
         async function pickCard(cardIdx) {
             if (pendingCodeIndex < 0) return;
             if (openedCards.includes(cardIdx)) return;
@@ -553,6 +550,7 @@
             }
         }
 
+        // 頁面切換
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
@@ -560,7 +558,7 @@
             if (pageId === 'mystery') loadMysteryCards();
         };
 
-        // ====== 主頁動畫、密碼卡片等 ======
+        // 其他功能
         const correctPassword = "201076";
         let passwordVerified = false;
 
@@ -622,6 +620,7 @@
                 document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
             }
         }
+
         document.getElementById('passwordModal').addEventListener('click', function(e) {
             if (e.target === this) this.style.display = 'none';
         });
@@ -651,17 +650,13 @@
             }
         }, { once: true });
 
-        // ====== 初始化 ======
+        // 初始化
         window.addEventListener('load', () => {
-            // 優先執行主頁動畫
             startTextAnimation();
-            // Cusdis 初始化
             startObservingCusdis();
             adjustCusdisHeight();
             setTimeout(adjustCusdisHeight, 500);
             setTimeout(adjustCusdisHeight, 1500);
-            // 背景載入抽獎資料（不影響主頁）
-            loadRaffleData().catch(() => {});
         });
     </script>
 </body>
