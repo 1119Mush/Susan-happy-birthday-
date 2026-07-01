@@ -356,7 +356,6 @@
 
     <script src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-        // ========== 你的 Worker 網址 ==========
         const WORKER_URL = "https://sue.by-yanki.workers.dev";
 
         document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
@@ -429,37 +428,33 @@
 
         async function loadRaffleData() {
             try {
-                const response = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
+                const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, {
                     cache: 'no-store',
                     headers: { 'Cache-Control': 'no-cache' }
                 });
-                if (!response.ok) throw new Error('讀取失敗');
-                const data = await response.json();
+                if (!res.ok) throw new Error('讀取失敗');
+                const data = await res.json();
                 usedCodes = data.usedCodes || [];
                 openedCards = data.openedCards || [];
-            } catch (error) {
-                console.error('讀取抽獎紀錄失敗:', error);
-                usedCodes = [];
-                openedCards = [];
+            } catch (e) {
+                console.error('讀取失敗', e);
             }
         }
 
-        async function saveRaffleData(payload) {
-            const response = await fetch(`${WORKER_URL}/save`, {
+        async function saveOperation(useCode, openCard) {
+            const res = await fetch(`${WORKER_URL}/save`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ useCode, openCard })
             });
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error('儲存失敗，伺服器回應: ' + text);
+            const result = await res.json();
+            if (!res.ok || result.error) {
+                throw new Error(result.error || '儲存失敗');
             }
         }
 
         function updateRemainingDisplay() {
-            const remainingCodes = 6 - usedCodes.length;
-            const remainingCards = 6 - openedCards.length;
-            const remaining = Math.min(remainingCodes, remainingCards);
+            const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
             document.getElementById('remainingCount').textContent = remaining;
         }
 
@@ -468,12 +463,12 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            mysteryCards.forEach((card, index) => {
+            mysteryCards.forEach((card, idx) => {
                 const container = document.createElement('div');
                 container.className = 'flip-container';
-                container.dataset.cardIndex = index;
+                container.dataset.cardIndex = idx;
 
-                if (openedCards.includes(index)) {
+                if (openedCards.includes(idx)) {
                     container.classList.add('flipped', 'used');
                     container.innerHTML = `
                         <div class="flip-inner">
@@ -488,10 +483,7 @@
                             <div class="flip-back"><p>${card.back}</p></div>
                         </div>
                     `;
-                    container.onclick = function(e) {
-                        pickCard(index);
-                        e.stopPropagation();
-                    };
+                    container.onclick = () => pickCard(idx);
                 } else {
                     container.innerHTML = `
                         <div class="flip-inner">
@@ -514,68 +506,42 @@
 
         async function submitCode() {
             await loadRaffleData();
-            
             const input = document.getElementById('rafflePwdInput');
             const errorEl = document.getElementById('raffleError');
             const code = input.value.trim();
             errorEl.textContent = '';
 
-            if (!code) {
-                errorEl.textContent = '請輸入密碼';
-                return;
-            }
+            if (!code) { errorEl.textContent = '請輸入密碼'; return; }
+            const idx = raffleCodes.indexOf(code);
+            if (idx === -1) { errorEl.textContent = '密碼無效'; return; }
+            if (usedCodes.includes(idx)) { errorEl.textContent = '密碼已被使用'; return; }
+            if (openedCards.length >= 6) { errorEl.textContent = '卡片已全開'; return; }
 
-            const codeIndex = raffleCodes.indexOf(code);
-            if (codeIndex === -1) {
-                errorEl.textContent = '密碼無效，請再試一次';
-                return;
-            }
-
-            if (usedCodes.includes(codeIndex)) {
-                errorEl.textContent = '這個密碼已經被使用過了！';
-                return;
-            }
-
-            if (openedCards.length >= mysteryCards.length) {
-                errorEl.textContent = '所有卡片都已經被翻開了！';
-                return;
-            }
-
-            pendingCodeIndex = codeIndex;
-            errorEl.textContent = '';
+            pendingCodeIndex = idx;
             input.value = '';
             document.getElementById('pickHint').hidden = false;
             renderCards();
         }
 
-        async function pickCard(cardIndex) {
+        async function pickCard(cardIdx) {
             if (pendingCodeIndex < 0) return;
-            if (openedCards.includes(cardIndex)) return;
-
+            if (openedCards.includes(cardIdx)) return;
             const errorEl = document.getElementById('raffleError');
-            
-            const newUsedCodes = [...usedCodes, pendingCodeIndex];
-            const newOpenedCards = [...openedCards, cardIndex];
-            const payload = {
-                usedCodes: newUsedCodes,
-                openedCards: newOpenedCards
-            };
 
             try {
-                await saveRaffleData(payload);
-            } catch (error) {
-                errorEl.textContent = '儲存失敗，請稍後再試 (' + error.message + ')';
-                console.error(error);
+                await saveOperation(pendingCodeIndex, cardIdx);
+            } catch (e) {
+                errorEl.textContent = '儲存失敗: ' + e.message;
                 return;
             }
 
+            // 儲存成功，重新讀取最新狀態
             await loadRaffleData();
-            
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
             renderCards();
 
-            const card = document.querySelector(`.flip-container[data-card-index="${cardIndex}"]`);
+            const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
             if (card) {
                 card.classList.add('flipped', 'used');
                 card.onclick = null;
@@ -593,12 +559,8 @@
         const originalShowPage = showPage;
         showPage = function(pageId) {
             originalShowPage(pageId);
-            if (pageId === 'wishes') {
-                onWishesPageActive();
-            }
-            if (pageId === 'mystery') {
-                loadMysteryCards();
-            }
+            if (pageId === 'wishes') onWishesPageActive();
+            if (pageId === 'mystery') loadMysteryCards();
         };
 
         const correctPassword = "201076";
@@ -637,16 +599,12 @@
                 span.style.animationDelay = (index * 0.12) + 's';
                 container.appendChild(span);
             });
-            const totalDuration = (message.length * 0.12 + 0.6) * 1000;
-            setTimeout(() => {
-                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-            }, totalDuration);
+            setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), (message.length * 0.12 + 0.6) * 1000);
         }
 
         function showCardWithPassword() {
-            if (passwordVerified) {
-                showPage('card');
-            } else {
+            if (passwordVerified) showPage('card');
+            else {
                 document.getElementById('passwordModal').style.display = 'flex';
                 document.getElementById('pwdInput').value = '';
                 document.getElementById('pwdError').textContent = '';
@@ -654,8 +612,7 @@
         }
 
         function checkPassword() {
-            const input = document.getElementById('pwdInput').value.trim();
-            if (input === correctPassword) {
+            if (document.getElementById('pwdInput').value.trim() === correctPassword) {
                 passwordVerified = true;
                 document.getElementById('passwordModal').style.display = 'none';
                 showPage('card');
@@ -695,9 +652,7 @@
 
         window.addEventListener('load', () => {
             startTextAnimation();
-            if (document.getElementById('wishes').classList.contains('active')) {
-                onWishesPageActive();
-            }
+            if (document.getElementById('wishes').classList.contains('active')) onWishesPageActive();
         });
     </script>
 </body>
