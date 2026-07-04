@@ -19,8 +19,7 @@
             --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            /* 平板橫屏時頂欄更高，留白更多 */
-            --topbar-height: clamp(70px, 10vh, 100px);
+            --topbar-height: clamp(65px, 8vh, 80px);
         }
 
         * {
@@ -36,7 +35,7 @@
             min-height: 100vh;
             position: relative;
             -webkit-font-smoothing: antialiased;
-            padding-top: calc(var(--topbar-height) + 1rem);
+            padding-top: calc(var(--topbar-height) + 1.2rem);
         }
 
         .hearts-container {
@@ -68,7 +67,7 @@
             }
         }
 
-        /* ---- 頂欄美化 ---- */
+        /* ---- 頂欄 ---- */
         .top-bar {
             position: fixed;
             top: 0;
@@ -81,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: clamp(0.8rem, 2vw, 1.5rem) clamp(1.5rem, 6vw, 3rem);
+            padding: clamp(6px, 1.5vh, 14px) clamp(1rem, 4vw, 2.5rem);
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
@@ -95,23 +94,21 @@
         }
 
         .top-bar .site-title {
-            font-size: clamp(1.2rem, 4.5vw, 1.8rem);
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
             flex-shrink: 0;
-            margin-right: clamp(1.5rem, 5vw, 3rem);
+            margin-right: clamp(1rem, 4vw, 2.5rem);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* 導航列 */
         .nav-stories {
             display: flex;
-            gap: clamp(10px, 3vw, 18px);
+            gap: clamp(8px, 2.5vw, 14px);
             align-items: center;
             flex-wrap: nowrap;
             flex-shrink: 0;
-            padding: 6px 0;
         }
 
         .nav-stories .story-item {
@@ -120,8 +117,7 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.2s;
-            min-width: 48px;
-            padding: 4px;
+            min-width: 44px;
         }
 
         .nav-stories .story-item:hover {
@@ -129,8 +125,8 @@
         }
 
         .nav-stories .story-ring {
-            width: clamp(40px, 8vw, 52px);
-            height: clamp(40px, 8vw, 52px);
+            width: clamp(36px, 7vw, 46px);
+            height: clamp(36px, 7vw, 46px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             padding: 2px;
@@ -138,7 +134,7 @@
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .nav-stories .story-ring i {
@@ -150,25 +146,24 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+            font-size: clamp(0.75rem, 3vw, 1rem);
         }
 
         .nav-stories .story-label {
-            font-size: clamp(0.6rem, 2.2vw, 0.85rem);
+            font-size: clamp(0.5rem, 2vw, 0.7rem);
             color: white;
             text-align: center;
             white-space: nowrap;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            padding: 0 4px;
         }
 
         /* ---- 主要內容 ---- */
         #app {
             position: relative;
             z-index: 1;
-            max-width: 600px;
+            max-width: 560px;
             margin: 0 auto;
-            padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem) 3rem;
+            padding: clamp(0.8rem, 3vw, 1.5rem) clamp(0.8rem, 3vw, 1.5rem) 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -198,9 +193,9 @@
         .ins-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: clamp(14px, 3vw, 22px);
-            padding: clamp(18px, 5vw, 32px);
-            margin-bottom: clamp(16px, 3vw, 26px);
+            border-radius: clamp(14px, 3vw, 20px);
+            padding: clamp(16px, 5vw, 28px);
+            margin-bottom: clamp(14px, 3vw, 22px);
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
@@ -210,9 +205,9 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
         }
 
-        /* 主頁標題（保證一行且明顯放大） */
+        /* 主頁標題（置中 + 一行） */
         #home .animated-text {
-            font-size: clamp(2.2rem, 8vw, 4rem);
+            font-size: clamp(2rem, 7vw, 3.6rem);
             font-weight: 600;
             color: var(--accent);
             text-align: center;
@@ -220,8 +215,9 @@
             min-height: 4rem;
             margin: 2rem 0 1.5rem;
             white-space: nowrap;
-            overflow: visible;
-            text-overflow: clip;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .animated-text span {
@@ -252,10 +248,10 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: clamp(10px, 2.5vw, 14px) clamp(20px, 5vw, 30px);
+            padding: clamp(8px, 2vw, 12px) clamp(18px, 5vw, 26px);
             border-radius: 8px;
             font-weight: 500;
-            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
@@ -290,7 +286,7 @@
 
         .modal input {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 1rem;
@@ -304,15 +300,15 @@
 
         .error-msg {
             color: #e74c3c;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin-top: 8px;
         }
 
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: clamp(8px, 2.5vw, 14px);
-            margin: 1.2rem 0;
+            gap: clamp(6px, 2vw, 12px);
+            margin: 1rem 0;
         }
 
         .flip-container {
@@ -348,7 +344,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: clamp(6px, 2vw, 12px);
+            padding: clamp(4px, 2vw, 10px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border);
             overflow: hidden;
@@ -356,25 +352,25 @@
 
         .flip-front {
             background: linear-gradient(135deg, #eaf3f3, #dce8ea);
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
         }
 
         .flip-back {
             background: white;
             transform: rotateY(180deg);
             text-align: center;
-            line-height: 1.5;
+            line-height: 1.4;
             color: var(--text);
         }
 
         .flip-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+            font-size: clamp(0.65rem, 2.5vw, 1rem);
             color: #2c3e50;
             margin: 2px 0;
             word-break: break-word;
             overflow-wrap: break-word;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         .flip-container.used .flip-front {
@@ -385,9 +381,9 @@
             background: #f0f8f8;
             border: 1px solid #c8dce0;
             border-radius: 10px;
-            padding: 14px 18px;
-            margin-bottom: 1.2rem;
-            font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+            padding: 12px 16px;
+            margin-bottom: 1rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: #3a7a7a;
             text-align: center;
         }
@@ -397,7 +393,7 @@
         }
 
         #cusdis_thread {
-            min-height: clamp(300px, 50vh, 400px);
+            min-height: clamp(280px, 50vh, 380px);
             width: 100%;
             position: relative;
         }
@@ -405,7 +401,7 @@
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: clamp(480px, 70vh, 750px);
+            height: clamp(450px, 70vh, 700px);
             cursor: pointer;
         }
 
@@ -433,7 +429,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: clamp(1.2rem, 4vw, 2.5rem);
+            padding: clamp(1rem, 4vw, 2rem);
         }
 
         .card-front {
@@ -449,25 +445,25 @@
 
         .card-front p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(2.5rem, 7vw, 3.5rem);
+            font-size: clamp(2rem, 7vw, 3rem);
             color: white;
         }
 
         .card-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(0.85rem, 3vw, 1.2rem);
-            line-height: 1.7;
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
+            line-height: 1.6;
             color: #2c3e50;
-            margin: 0.35rem 0;
+            margin: 0.3rem 0;
             text-align: left;
             word-break: break-word;
-            padding: 0 0.8rem;
+            padding: 0 0.5rem;
         }
 
         .card-back .signature {
-            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
             font-weight: bold;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
         }
 
         .card-back .signature em {
@@ -480,33 +476,29 @@
             right: 24px;
             background: white;
             border-radius: 50%;
-            width: clamp(44px, 8vw, 56px);
-            height: clamp(44px, 8vw, 56px);
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             z-index: 15;
-            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            font-size: clamp(1rem, 3vw, 1.4rem);
             color: var(--accent);
             border: 1px solid var(--border);
         }
 
-        /* 極小螢幕微調 */
-        @media (max-width: 360px) {
+        @media (max-width: 400px) {
             .nav-stories .story-ring {
-                width: 34px;
-                height: 34px;
+                width: 32px;
+                height: 32px;
             }
             .flip-back p {
-                font-size: 0.68rem;
+                font-size: 0.65rem;
             }
             .card-container {
-                height: 500px;
-            }
-            #home .animated-text {
-                font-size: 2rem;
+                height: 480px;
             }
         }
     </style>
@@ -551,14 +543,14 @@
 
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-            <p style="color: var(--secondary-text); font-size: clamp(0.8rem, 2.5vw, 1rem); text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
+            <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
         </div>
 
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
-                <img src="IMG_2411.jpeg" alt="壽星" style="width: clamp(110px, 25vw, 150px); height: clamp(110px, 25vw, 150px); border-radius:50%; object-fit:cover; border:4px solid var(--accent-light);">
-                <h2 style="font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 6vw, 3rem); margin: 0.5rem 0; color: var(--accent);">Susan</h2>
-                <div style="color: var(--secondary-text); line-height: 1.8; font-size: clamp(0.9rem, 2.5vw, 1.1rem);">
+                <img src="IMG_2411.jpeg" alt="壽星" style="width: clamp(100px, 25vw, 140px); height: clamp(100px, 25vw, 140px); border-radius:50%; object-fit:cover; border:4px solid var(--accent-light);">
+                <h2 style="font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 6vw, 2.8rem); margin: 0.5rem 0; color: var(--accent);">Susan</h2>
+                <div style="color: var(--secondary-text); line-height: 1.8; font-size: clamp(0.85rem, 2.5vw, 1rem);">
                     <p><strong>名字：</strong>Susan</p>
                     <p><strong>生日：</strong>7月6日</p>
                     <p><strong>星座：</strong>巨蟹座</p>
@@ -570,31 +562,31 @@
 
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem; font-size: clamp(1.2rem, 4vw, 1.5rem);">✨ 兌換抽獎</h3>
-                <p style="color: var(--secondary-text); font-size: clamp(0.8rem, 2.5vw, 1rem); text-align: center; margin-bottom: 1rem;">
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem; font-size: clamp(1.1rem, 4vw, 1.4rem);">✨ 兌換抽獎</h3>
+                <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-bottom: 1rem;">
                     輸入兌換碼後，點選一張卡片翻開 💖
                 </p>
                 <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
-                    <input type="password" id="rafflePwdInput" placeholder="輸入抽獎碼" maxlength="20" style="flex:1; padding:12px 16px; border:1px solid var(--border); border-radius:20px; font-size:0.95rem;">
+                    <input type="password" id="rafflePwdInput" placeholder="輸入抽獎碼" maxlength="20" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:20px; font-size:0.9rem;">
                     <button class="ins-btn" onclick="submitCode()">驗證</button>
                 </div>
                 <p class="error-msg" id="raffleError"></p>
-                <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
+                <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
                 <div class="flip-grid" id="flipGrid">
                     <p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 載入中...</p>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                    <p style="color: var(--secondary-text); font-size: 0.85rem; margin: 0;">
+                    <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
                         剩餘可抽次數：<strong id="remainingCount">...</strong>
                     </p>
-                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.85rem; padding:8px 14px;">🔄 刷新</button>
+                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新</button>
                 </div>
             </div>
         </div>
 
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; font-size: clamp(1.2rem, 4vw, 1.5rem);">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
+                <h3 style="font-weight: 500; font-size: clamp(1.1rem, 4vw, 1.4rem);">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
@@ -613,7 +605,7 @@
                 <div class="birthday-card" id="birthdayCard">
                     <div class="card-front">
                         <p>🎂</p>
-                        <p style="font-size: clamp(1.3rem, 4vw, 1.8rem);">點擊翻轉</p>
+                        <p style="font-size: clamp(1.1rem, 4vw, 1.6rem);">點擊翻轉</p>
                     </div>
                     <div class="card-back">
                         <p>
