@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
+        /* ===== 完全保留原始配色 ===== */
         :root {
             --bg: #fafafa;
             --card-bg: #ffffff;
@@ -38,6 +39,7 @@
             padding-top: calc(var(--topbar-height) + 1rem);
         }
 
+        /* ===== 爱心（保留原 Emoji） ===== */
         .hearts-container {
             position: fixed;
             top: 0;
@@ -67,6 +69,7 @@
             }
         }
 
+        /* ===== 顶部导航（修复溢出） ===== */
         .top-bar {
             position: fixed;
             top: 0;
@@ -86,6 +89,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             -ms-overflow-style: none;
+            gap: 4px;
         }
 
         .top-bar::-webkit-scrollbar {
@@ -108,7 +112,7 @@
             align-items: center;
             flex-wrap: nowrap;
             flex-shrink: 0;
-            padding: 4px 0; /* 增加垂直内距，避免图标贴边 */
+            padding: 4px 0;
         }
 
         .nav-stories .story-item {
@@ -126,7 +130,7 @@
         }
 
         .nav-stories .story-ring {
-            width: clamp(44px, 12vw, 50px);  /* 手机端显著增大 */
+            width: clamp(44px, 12vw, 50px);
             height: clamp(44px, 12vw, 50px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
@@ -160,6 +164,7 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
+        /* ===== 主容器 ===== */
         #app {
             position: relative;
             z-index: 1;
@@ -207,6 +212,7 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
         }
 
+        /* ===== 主页文字动画 ===== */
         #home .animated-text {
             font-size: clamp(1.8rem, 8vw, 3.5rem);
             font-weight: 600;
@@ -241,6 +247,7 @@
             }
         }
 
+        /* ===== 按钮 ===== */
         .ins-btn {
             background: var(--accent);
             color: white;
@@ -257,6 +264,7 @@
             transform: scale(0.96);
         }
 
+        /* ===== 密码弹窗 ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -264,11 +272,15 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 30;
             backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
         }
 
         .modal {
@@ -301,6 +313,7 @@
             margin-top: 8px;
         }
 
+        /* ===== 抽奖卡片网格（修复间距） ===== */
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -374,6 +387,7 @@
             opacity: 0.5;
         }
 
+        /* ===== 祝福区 ===== */
         .wechat-notice {
             background: #f0f8f8;
             border: 1px solid #c8dce0;
@@ -395,7 +409,7 @@
             position: relative;
         }
 
-        /* 生日卡片响应式高度 */
+        /* ===== 生日卡片（高度自适应） ===== */
         .card-container {
             perspective: 1000px;
             width: 100%;
@@ -468,6 +482,7 @@
             font-style: normal;
         }
 
+        /* ===== 音乐按钮 ===== */
         .music-float {
             position: fixed;
             bottom: 24px;
@@ -487,7 +502,7 @@
             border: 1px solid var(--border);
         }
 
-        /* 小屏幕再强化一下图标尺寸和间距 */
+        /* ===== 小屏适配 ===== */
         @media (max-width: 480px) {
             .nav-stories .story-ring {
                 width: clamp(50px, 18vw, 56px);
@@ -624,7 +639,7 @@
 
 </div>
 
-<div class="modal-overlay" id="passwordModal" style="display: none;">
+<div class="modal-overlay" id="passwordModal">
     <div class="modal">
         <h3>🔐 輸入密碼打開卡片</h3>
         <input type="password" id="pwdInput" placeholder="輸入密碼" maxlength="6">
@@ -635,6 +650,7 @@
 
 <script src="https://cusdis.com/js/cusdis.es.js"></script>
 <script>
+    // ==================== 所有邏輯保持不變，僅修復排版 ====================
     const WORKER_URL = "https://sue.by-yanki.workers.dev";
     const raffleCodes = ["202576", "202676", "5201314", "Dream", "Surprice", "Wait"];
     const mysteryCards = [
@@ -878,7 +894,7 @@
     function showCardWithPassword() {
         if (passwordVerified) showPage('card');
         else {
-            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordModal').classList.add('show');
             document.getElementById('pwdInput').value = '';
             document.getElementById('pwdError').textContent = '';
         }
@@ -887,7 +903,7 @@
     function checkPassword() {
         if (document.getElementById('pwdInput').value.trim() === correctPassword) {
             passwordVerified = true;
-            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordModal').classList.remove('show');
             showPage('card');
         } else {
             document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
@@ -895,7 +911,7 @@
     }
 
     document.getElementById('passwordModal').addEventListener('click', function(e) {
-        if (e.target === this) this.style.display = 'none';
+        if (e.target === this) this.classList.remove('show');
     });
 
     function flipCard() {
