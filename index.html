@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
-        /* ===== 完全保留原始配色 ===== */
         :root {
             --bg: #fafafa;
             --card-bg: #ffffff;
@@ -20,7 +19,7 @@
             --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            --topbar-height: clamp(60px, 8vh, 70px);
+            --topbar-height: 70px;
         }
 
         * {
@@ -39,7 +38,6 @@
             padding-top: calc(var(--topbar-height) + 1rem);
         }
 
-        /* ===== 爱心（保留原 Emoji） ===== */
         .hearts-container {
             position: fixed;
             top: 0;
@@ -69,7 +67,6 @@
             }
         }
 
-        /* ===== 顶部导航（修复溢出） ===== */
         .top-bar {
             position: fixed;
             top: 0;
@@ -82,14 +79,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 clamp(0.5rem, 2vw, 1rem);
+            padding: 0 1rem;
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             -ms-overflow-style: none;
-            gap: 4px;
         }
 
         .top-bar::-webkit-scrollbar {
@@ -97,22 +93,21 @@
         }
 
         .top-bar .site-title {
-            font-size: clamp(1rem, 4vw, 1.4rem);
+            font-size: 1.2rem;
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
             flex-shrink: 0;
-            margin-right: 0.5rem;
+            margin-right: 1rem;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .nav-stories {
             display: flex;
-            gap: clamp(6px, 2vw, 12px);
+            gap: 8px;
             align-items: center;
             flex-wrap: nowrap;
             flex-shrink: 0;
-            padding: 4px 0;
         }
 
         .nav-stories .story-item {
@@ -122,7 +117,6 @@
             cursor: pointer;
             transition: transform 0.2s;
             min-width: 44px;
-            padding: 4px 0;
         }
 
         .nav-stories .story-item:hover {
@@ -130,8 +124,8 @@
         }
 
         .nav-stories .story-ring {
-            width: clamp(44px, 12vw, 50px);
-            height: clamp(44px, 12vw, 50px);
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             padding: 2px;
@@ -139,7 +133,6 @@
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-bottom: 2px;
         }
 
         .nav-stories .story-ring i {
@@ -151,26 +144,25 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: clamp(1rem, 5vw, 1.3rem);
+            font-size: 0.9rem;
         }
 
         .nav-stories .story-label {
-            font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+            font-size: 0.6rem;
             margin-top: 2px;
             color: white;
-            max-width: 55px;
+            max-width: 50px;
             text-align: center;
             white-space: nowrap;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* ===== 主容器 ===== */
         #app {
             position: relative;
             z-index: 1;
             max-width: 520px;
             margin: 0 auto;
-            padding: clamp(0.5rem, 3vw, 1.5rem) clamp(0.5rem, 3vw, 1rem) 3rem;
+            padding: 1rem 1rem 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -200,9 +192,9 @@
         .ins-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: clamp(12px, 3vw, 20px);
-            padding: clamp(16px, 5vw, 28px);
-            margin-bottom: clamp(12px, 3vw, 24px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
@@ -212,9 +204,8 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
         }
 
-        /* ===== 主页文字动画 ===== */
         #home .animated-text {
-            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            font-size: 2.8rem;
             font-weight: 600;
             color: var(--accent);
             text-align: center;
@@ -247,15 +238,14 @@
             }
         }
 
-        /* ===== 按钮 ===== */
         .ins-btn {
             background: var(--accent);
             color: white;
             border: none;
-            padding: clamp(8px, 2vw, 12px) clamp(18px, 5vw, 28px);
+            padding: 10px 24px;
             border-radius: 8px;
             font-weight: 500;
-            font-size: clamp(0.8rem, 3vw, 1.1rem);
+            font-size: 1rem;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
@@ -264,7 +254,6 @@
             transform: scale(0.96);
         }
 
-        /* ===== 密码弹窗 ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -272,22 +261,18 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 30;
             backdrop-filter: blur(4px);
         }
 
-        .modal-overlay.show {
-            display: flex;
-        }
-
         .modal {
             background: white;
             border-radius: 20px;
-            padding: clamp(1.5rem, 5vw, 2.5rem);
-            max-width: 90vw;
+            padding: 2rem;
+            max-width: 320px;
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -313,11 +298,10 @@
             margin-top: 8px;
         }
 
-        /* ===== 抽奖卡片网格（修复间距） ===== */
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: clamp(6px, 2vw, 12px);
+            gap: 10px;
             margin: 1rem 0;
         }
 
@@ -354,7 +338,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: clamp(4px, 2vw, 10px);
+            padding: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border);
             overflow: hidden;
@@ -362,7 +346,7 @@
 
         .flip-front {
             background: linear-gradient(135deg, #eaf3f3, #dce8ea);
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-size: 2rem;
         }
 
         .flip-back {
@@ -375,7 +359,7 @@
 
         .flip-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(0.65rem, 2.5vw, 1rem);
+            font-size: 0.9rem;
             color: #2c3e50;
             margin: 2px 0;
             word-break: break-word;
@@ -387,14 +371,13 @@
             opacity: 0.5;
         }
 
-        /* ===== 祝福区 ===== */
         .wechat-notice {
             background: #f0f8f8;
             border: 1px solid #c8dce0;
             border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 1rem;
-            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            font-size: 0.85rem;
             color: #3a7a7a;
             text-align: center;
         }
@@ -404,16 +387,16 @@
         }
 
         #cusdis_thread {
-            min-height: clamp(280px, 50vh, 380px);
+            min-height: 380px;
             width: 100%;
             position: relative;
         }
 
-        /* ===== 生日卡片（高度自适应） ===== */
+        /* ===== 修复后的生日卡片 ===== */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: clamp(450px, 70vh, 700px);
+            height: 650px;            /* 固定高度，确保背面完全显示 */
             cursor: pointer;
         }
 
@@ -441,7 +424,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: clamp(1rem, 4vw, 2rem);
+            padding: 1.5rem;
         }
 
         .card-front {
@@ -451,19 +434,19 @@
         .card-back {
             background: white;
             transform: rotateY(180deg);
-            justify-content: flex-start;
-            overflow-y: auto;
+            justify-content: flex-start;   /* 内容从上开始 */
+            overflow-y: auto;             /* 万一超长可以滚动，但已留足高度 */
         }
 
         .card-front p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(2rem, 7vw, 3rem);
+            font-size: 2.5rem;
             color: white;
         }
 
         .card-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(0.8rem, 3vw, 1.1rem);
+            font-size: 1rem;
             line-height: 1.6;
             color: #2c3e50;
             margin: 0.3rem 0;
@@ -473,7 +456,7 @@
         }
 
         .card-back .signature {
-            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            font-size: 1.2rem;
             font-weight: bold;
             margin-top: 0.8rem;
         }
@@ -482,37 +465,54 @@
             font-style: normal;
         }
 
-        /* ===== 音乐按钮 ===== */
         .music-float {
             position: fixed;
             bottom: 24px;
             right: 24px;
             background: white;
             border-radius: 50%;
-            width: clamp(40px, 8vw, 50px);
-            height: clamp(40px, 8vw, 50px);
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             z-index: 15;
-            font-size: clamp(1rem, 3vw, 1.4rem);
+            font-size: 1.2rem;
             color: var(--accent);
             border: 1px solid var(--border);
         }
 
-        /* ===== 小屏适配 ===== */
-        @media (max-width: 480px) {
-            .nav-stories .story-ring {
-                width: clamp(50px, 18vw, 56px);
-                height: clamp(50px, 18vw, 56px);
+        @media (max-width: 500px) {
+            .top-bar .site-title {
+                font-size: 1rem;
             }
-            .nav-stories .story-ring i {
-                font-size: clamp(1.2rem, 6vw, 1.5rem);
+            #home .animated-text {
+                font-size: 2.2rem;
             }
-            .nav-stories {
-                gap: 10px;
+            #cusdis_thread {
+                min-height: 280px;
+            }
+            .flip-grid {
+                gap: 6px;
+            }
+            .flip-back p {
+                font-size: 0.75rem;
+            }
+            .flip-front,
+            .flip-back {
+                padding: 4px;
+            }
+            .card-container {
+                height: 550px;            /* 移动端稍矮，仍足够显示 */
+            }
+            .card-back p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            .card-back .signature {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -557,14 +557,14 @@
 
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-            <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
+            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
         </div>
 
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
-                <img src="IMG_2411.jpeg" alt="壽星" style="width: clamp(100px, 25vw, 140px); height: clamp(100px, 25vw, 140px); border-radius:50%; object-fit:cover; border:4px solid var(--accent-light);">
-                <h2 style="font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 6vw, 2.8rem); margin: 0.5rem 0; color: var(--accent);">Susan</h2>
-                <div style="color: var(--secondary-text); line-height: 1.8; font-size: clamp(0.85rem, 2.5vw, 1rem);">
+                <img src="IMG_2411.jpeg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
+                <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">Susan</h2>
+                <div style="color: var(--secondary-text); line-height: 1.8;">
                     <p><strong>名字：</strong>Susan</p>
                     <p><strong>生日：</strong>7月6日</p>
                     <p><strong>星座：</strong>巨蟹座</p>
@@ -576,8 +576,8 @@
 
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem; font-size: clamp(1.1rem, 4vw, 1.4rem);">✨ 兌換抽獎</h3>
-                <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-bottom: 1rem;">
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 兌換抽獎</h3>
+                <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
                     輸入兌換碼後，點選一張卡片翻開 💖
                 </p>
                 <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
@@ -600,7 +600,7 @@
 
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; font-size: clamp(1.1rem, 4vw, 1.4rem);">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
+                <h3 style="font-weight: 500;">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
@@ -620,7 +620,7 @@
                 <div class="birthday-card" id="birthdayCard">
                     <div class="card-front">
                         <p>🎂</p>
-                        <p style="font-size: clamp(1.1rem, 4vw, 1.6rem);">點擊翻轉</p>
+                        <p style="font-size: 1.4rem;">點擊翻轉</p>
                     </div>
                     <div class="card-back">
                         <p>
@@ -639,7 +639,7 @@
 
 </div>
 
-<div class="modal-overlay" id="passwordModal">
+<div class="modal-overlay" id="passwordModal" style="display: none;">
     <div class="modal">
         <h3>🔐 輸入密碼打開卡片</h3>
         <input type="password" id="pwdInput" placeholder="輸入密碼" maxlength="6">
@@ -650,7 +650,6 @@
 
 <script src="https://cusdis.com/js/cusdis.es.js"></script>
 <script>
-    // ==================== 所有邏輯保持不變，僅修復排版 ====================
     const WORKER_URL = "https://sue.by-yanki.workers.dev";
     const raffleCodes = ["202576", "202676", "5201314", "Dream", "Surprice", "Wait"];
     const mysteryCards = [
@@ -894,7 +893,7 @@
     function showCardWithPassword() {
         if (passwordVerified) showPage('card');
         else {
-            document.getElementById('passwordModal').classList.add('show');
+            document.getElementById('passwordModal').style.display = 'flex';
             document.getElementById('pwdInput').value = '';
             document.getElementById('pwdError').textContent = '';
         }
@@ -903,7 +902,7 @@
     function checkPassword() {
         if (document.getElementById('pwdInput').value.trim() === correctPassword) {
             passwordVerified = true;
-            document.getElementById('passwordModal').classList.remove('show');
+            document.getElementById('passwordModal').style.display = 'none';
             showPage('card');
         } else {
             document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
@@ -911,7 +910,7 @@
     }
 
     document.getElementById('passwordModal').addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('show');
+        if (e.target === this) this.style.display = 'none';
     });
 
     function flipCard() {
