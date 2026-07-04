@@ -15,8 +15,8 @@
             --card-bg: #ffffff;
             --text: #4a4a4a;
             --secondary-text: #8e8e8e;
-            --accent: #8fc0c5;
-            --accent-light: #d0e4e6;
+            --accent: #6ea8c0;
+            --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
             --topbar-height: 70px;
@@ -50,7 +50,7 @@
 
         .heart {
             position: absolute;
-            color: #8fc0c5;
+            color: #7db9d0;
             opacity: 0.5;
             font-size: 20px;
             animation: fall linear infinite;
@@ -73,15 +73,15 @@
             left: 0;
             width: 100%;
             height: var(--topbar-height);
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(135deg, #9fc9d9, #7bb3c7);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 1rem;
             z-index: 10;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -94,11 +94,12 @@
 
         .top-bar .site-title {
             font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--accent);
+            font-weight: 600;
+            color: white;
             letter-spacing: 1px;
             flex-shrink: 0;
             margin-right: 1rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .nav-stories {
@@ -126,11 +127,12 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #b8d4d8, #a0c4c9);
+            background: rgba(255, 255, 255, 0.3);
             padding: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(255,255,255,0.5);
         }
 
         .nav-stories .story-ring i {
@@ -148,10 +150,11 @@
         .nav-stories .story-label {
             font-size: 0.6rem;
             margin-top: 2px;
-            color: var(--secondary-text);
+            color: white;
             max-width: 50px;
             text-align: center;
             white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         #app {
@@ -335,7 +338,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border);
         }
@@ -349,16 +352,15 @@
             background: white;
             transform: rotateY(180deg);
             text-align: center;
-            font-size: 0.75rem;
+            line-height: 1.6;
             color: var(--text);
-            line-height: 1.5;
-            word-break: break-word;
         }
 
         .flip-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: 1rem;
-            color: #4a6a6a;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: 5px 0;
         }
 
         .flip-container.used .flip-front {
@@ -435,8 +437,9 @@
         }
 
         .card-back p {
-            color: #4a6a6a;
+            color: #2c3e50;
             font-size: 2rem;
+            line-height: 1.5;
         }
 
         .music-float {
@@ -472,7 +475,7 @@
                 gap: 6px;
             }
             .flip-back p {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -582,7 +585,7 @@
                         <p style="font-size: 1.4rem; color: white;">點擊翻轉</p>
                     </div>
                     <div class="card-back">
-                        <p style="font-size: 2rem; color: #4a6a6a;">
+                        <p style="font-size: 2rem; color: #2c3e50;">
                             親愛的 Susan，<br>
                             願你的每一天都像今天一樣閃閃發光✨<br>
                             生日快樂！<br>
