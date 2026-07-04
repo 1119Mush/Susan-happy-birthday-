@@ -19,7 +19,8 @@
             --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            --topbar-height: 70px;
+            /* 使用 clamp 让顶栏高度随屏幕宽度变化 */
+            --topbar-height: clamp(60px, 8vh, 70px);
         }
 
         * {
@@ -79,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
@@ -93,7 +94,7 @@
         }
 
         .top-bar .site-title {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.4rem);
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
@@ -124,8 +125,8 @@
         }
 
         .nav-stories .story-ring {
-            width: 38px;
-            height: 38px;
+            width: clamp(34px, 8vw, 42px);
+            height: clamp(34px, 8vw, 42px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             padding: 2px;
@@ -144,11 +145,11 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: 0.9rem;
+            font-size: clamp(0.7rem, 3vw, 1rem);
         }
 
         .nav-stories .story-label {
-            font-size: 0.6rem;
+            font-size: clamp(0.5rem, 2vw, 0.7rem);
             margin-top: 2px;
             color: white;
             max-width: 50px;
@@ -162,7 +163,7 @@
             z-index: 1;
             max-width: 520px;
             margin: 0 auto;
-            padding: 1rem 1rem 3rem;
+            padding: clamp(0.5rem, 3vw, 1.5rem) clamp(0.5rem, 3vw, 1rem) 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -192,9 +193,9 @@
         .ins-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: clamp(12px, 3vw, 20px);
+            padding: clamp(16px, 5vw, 28px);
+            margin-bottom: clamp(12px, 3vw, 24px);
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
@@ -205,7 +206,7 @@
         }
 
         #home .animated-text {
-            font-size: 2.8rem;
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
             font-weight: 600;
             color: var(--accent);
             text-align: center;
@@ -242,10 +243,10 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: 10px 24px;
+            padding: clamp(8px, 2vw, 12px) clamp(18px, 5vw, 28px);
             border-radius: 8px;
             font-weight: 500;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
@@ -271,8 +272,8 @@
         .modal {
             background: white;
             border-radius: 20px;
-            padding: 2rem;
-            max-width: 320px;
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            max-width: 90vw;
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -301,7 +302,7 @@
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: clamp(6px, 2vw, 12px);
             margin: 1rem 0;
         }
 
@@ -338,7 +339,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 6px;
+            padding: clamp(4px, 2vw, 10px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border);
             overflow: hidden;
@@ -346,7 +347,7 @@
 
         .flip-front {
             background: linear-gradient(135deg, #eaf3f3, #dce8ea);
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
         }
 
         .flip-back {
@@ -359,7 +360,7 @@
 
         .flip-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: 0.9rem;
+            font-size: clamp(0.65rem, 2.5vw, 1rem);
             color: #2c3e50;
             margin: 2px 0;
             word-break: break-word;
@@ -377,7 +378,7 @@
             border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 1rem;
-            font-size: 0.85rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: #3a7a7a;
             text-align: center;
         }
@@ -387,16 +388,16 @@
         }
 
         #cusdis_thread {
-            min-height: 380px;
+            min-height: clamp(280px, 50vh, 380px);
             width: 100%;
             position: relative;
         }
 
-        /* ===== 修复后的生日卡片 ===== */
+        /* 生日卡片响应式高度 */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: 650px;            /* 固定高度，确保背面完全显示 */
+            height: clamp(450px, 70vh, 700px);
             cursor: pointer;
         }
 
@@ -424,7 +425,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
+            padding: clamp(1rem, 4vw, 2rem);
         }
 
         .card-front {
@@ -434,19 +435,19 @@
         .card-back {
             background: white;
             transform: rotateY(180deg);
-            justify-content: flex-start;   /* 内容从上开始 */
-            overflow-y: auto;             /* 万一超长可以滚动，但已留足高度 */
+            justify-content: flex-start;
+            overflow-y: auto;
         }
 
         .card-front p {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 7vw, 3rem);
             color: white;
         }
 
         .card-back p {
             font-family: 'Dancing Script', cursive;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
             line-height: 1.6;
             color: #2c3e50;
             margin: 0.3rem 0;
@@ -456,7 +457,7 @@
         }
 
         .card-back .signature {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
             font-weight: bold;
             margin-top: 0.8rem;
         }
@@ -471,48 +472,30 @@
             right: 24px;
             background: white;
             border-radius: 50%;
-            width: 46px;
-            height: 46px;
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             z-index: 15;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.4rem);
             color: var(--accent);
             border: 1px solid var(--border);
         }
 
-        @media (max-width: 500px) {
-            .top-bar .site-title {
-                font-size: 1rem;
-            }
-            #home .animated-text {
-                font-size: 2.2rem;
-            }
-            #cusdis_thread {
-                min-height: 280px;
-            }
-            .flip-grid {
-                gap: 6px;
+        /* 小屏幕微调 */
+        @media (max-width: 400px) {
+            .nav-stories .story-ring {
+                width: 32px;
+                height: 32px;
             }
             .flip-back p {
-                font-size: 0.75rem;
-            }
-            .flip-front,
-            .flip-back {
-                padding: 4px;
+                font-size: 0.65rem;
             }
             .card-container {
-                height: 550px;            /* 移动端稍矮，仍足够显示 */
-            }
-            .card-back p {
-                font-size: 0.9rem;
-                line-height: 1.5;
-            }
-            .card-back .signature {
-                font-size: 1.1rem;
+                height: 500px;
             }
         }
     </style>
@@ -557,14 +540,14 @@
 
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
+            <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
         </div>
 
         <div id="profile" class="page">
             <div class="ins-card" style="text-align:center;">
-                <img src="IMG_2411.jpeg" alt="壽星" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--accent-light);">
-                <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.4rem; margin: 0.5rem 0; color: var(--accent);">Susan</h2>
-                <div style="color: var(--secondary-text); line-height: 1.8;">
+                <img src="IMG_2411.jpeg" alt="壽星" style="width: clamp(100px, 25vw, 140px); height: clamp(100px, 25vw, 140px); border-radius:50%; object-fit:cover; border:4px solid var(--accent-light);">
+                <h2 style="font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 6vw, 2.8rem); margin: 0.5rem 0; color: var(--accent);">Susan</h2>
+                <div style="color: var(--secondary-text); line-height: 1.8; font-size: clamp(0.85rem, 2.5vw, 1rem);">
                     <p><strong>名字：</strong>Susan</p>
                     <p><strong>生日：</strong>7月6日</p>
                     <p><strong>星座：</strong>巨蟹座</p>
@@ -576,8 +559,8 @@
 
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 兌換抽獎</h3>
-                <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem; font-size: clamp(1.1rem, 4vw, 1.4rem);">✨ 兌換抽獎</h3>
+                <p style="color: var(--secondary-text); font-size: clamp(0.75rem, 2.5vw, 0.9rem); text-align: center; margin-bottom: 1rem;">
                     輸入兌換碼後，點選一張卡片翻開 💖
                 </p>
                 <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
@@ -600,7 +583,7 @@
 
         <div id="wishes" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500;">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
+                <h3 style="font-weight: 500; font-size: clamp(1.1rem, 4vw, 1.4rem);">💌 給壽星的祝福（刷新滑動查看他人留言）</h3>
                 <div class="wechat-notice">
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
@@ -620,7 +603,7 @@
                 <div class="birthday-card" id="birthdayCard">
                     <div class="card-front">
                         <p>🎂</p>
-                        <p style="font-size: 1.4rem;">點擊翻轉</p>
+                        <p style="font-size: clamp(1.1rem, 4vw, 1.6rem);">點擊翻轉</p>
                     </div>
                     <div class="card-back">
                         <p>
