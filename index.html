@@ -396,7 +396,8 @@
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: 380px;   /* 增加高度以容纳长文本 */
+            height: auto;               /* 高度自适应内容 */
+            min-height: 380px;          /* 保证最小高度，防止卡片过小 */
             cursor: pointer;
         }
 
@@ -434,8 +435,8 @@
         .card-back {
             background: white;
             transform: rotateY(180deg);
-            justify-content: flex-start;   /* 内容从上开始排列，防止过多文字被挤到中间 */
-            overflow-y: auto;             /* 若文字仍然过多，可以滚动查看 */
+            justify-content: flex-start;
+            overflow-y: visible;       /* 不再需要滚动条，内容完全可见 */
         }
 
         .card-front p {
@@ -450,9 +451,20 @@
             line-height: 1.6;
             color: #2c3e50;
             margin: 0.3rem 0;
-            text-align: left;       /* 左对齐更易读 */
+            text-align: left;
             word-break: break-word;
             padding: 0 0.5rem;
+        }
+
+        /* 署名单独加大 */
+        .card-back .signature {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 0.8rem;
+        }
+
+        .card-back .signature em {
+            font-style: normal;
         }
 
         .music-float {
@@ -495,11 +507,14 @@
                 padding: 4px;
             }
             .card-container {
-                height: 340px;   /* 移动端适当减小高度 */
+                min-height: 340px;      /* 移动端最小高度稍小 */
             }
             .card-back p {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
                 line-height: 1.5;
+            }
+            .card-back .signature {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -544,7 +559,7 @@
 
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
+            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋</p>
         </div>
 
         <div id="profile" class="page">
@@ -555,7 +570,7 @@
                     <p><strong>名字：</strong>Susan</p>
                     <p><strong>生日：</strong>7月6日</p>
                     <p><strong>星座：</strong>巨蟹座</p>
-                    <p><strong>興趣：</strong>待輸入</p>
+                    <p><strong>MBTI：</strong>ISFP</p>
                     <p style="margin-top:1rem;">「願妳青春燦爛，未來無憂」</p>
                 </div>
             </div>
@@ -600,7 +615,7 @@
         </div>
     </div>
 
-    <!-- ===== 修改后的秘密生日卡 ===== -->
+    <!-- 修改后的秘密生日卡 -->
     <div id="card" class="page">
         <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
             <div class="card-container" onclick="flipCard()">
@@ -616,7 +631,7 @@
                             這是第二次給你慶祝生日✓ 在這一年中，很高興能夠和你一起發掘更多新的事物，探索各式各樣的地方，也有機會更加了解真實的你。<br><br>
                             你對我而言是一個很特別的存在，或許這樣說有點抽象，但你的性格感染了我，讓我學會嘗試更加投入當下去感受這個世界的人事物，嘗試不同的事情，以另一個新視角去看待這個世界，謝謝你！<br><br>
                             願你日日過得稱心自在！新的一歲，盼你繼續成長、尋找到屬於自己的機遇與方向，也能夠嘗試去看看、了解更遠的未來🥰<br><br>
-                            <em>Yanki</em>
+                            <span class="signature"><em>Yanki</em></span>
                         </p>
                     </div>
                 </div>
@@ -638,7 +653,7 @@
 <script src="https://cusdis.com/js/cusdis.es.js"></script>
 <script>
     const WORKER_URL = "https://sue.by-yanki.workers.dev";
-    const raffleCodes = ["202676", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
+    const raffleCodes = ["202576", "202676", "5201314", "Dream", "Surprice", "Wait"];
     const mysteryCards = [
         { front: "🎁", back: "神秘禮物一：<br>任選一杯奶茶！<br>隨時可用" },
         { front: "🎁", back: "神秘禮物二：<br>神秘紅包一個！" },
