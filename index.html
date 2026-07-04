@@ -392,12 +392,11 @@
             position: relative;
         }
 
-        /* ===== 修改生日卡片样式 ===== */
+        /* ===== 修复后的生日卡片 ===== */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: auto;               /* 高度自适应内容 */
-            min-height: 380px;          /* 保证最小高度，防止卡片过小 */
+            height: 650px;            /* 固定高度，确保背面完全显示 */
             cursor: pointer;
         }
 
@@ -435,8 +434,8 @@
         .card-back {
             background: white;
             transform: rotateY(180deg);
-            justify-content: flex-start;
-            overflow-y: visible;       /* 不再需要滚动条，内容完全可见 */
+            justify-content: flex-start;   /* 内容从上开始 */
+            overflow-y: auto;             /* 万一超长可以滚动，但已留足高度 */
         }
 
         .card-front p {
@@ -456,7 +455,6 @@
             padding: 0 0.5rem;
         }
 
-        /* 署名单独加大 */
         .card-back .signature {
             font-size: 1.2rem;
             font-weight: bold;
@@ -507,7 +505,7 @@
                 padding: 4px;
             }
             .card-container {
-                min-height: 340px;      /* 移动端最小高度稍小 */
+                height: 550px;            /* 移动端稍矮，仍足够显示 */
             }
             .card-back p {
                 font-size: 0.9rem;
@@ -615,7 +613,7 @@
         </div>
     </div>
 
-    <!-- 修改后的秘密生日卡 -->
+    <!-- 秘密生日卡 -->
     <div id="card" class="page">
         <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
             <div class="card-container" onclick="flipCard()">
