@@ -19,7 +19,7 @@
             --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            --topbar-height: clamp(65px, 8vh, 80px);
+            --topbar-height: clamp(60px, 8vh, 70px);
         }
 
         * {
@@ -35,7 +35,7 @@
             min-height: 100vh;
             position: relative;
             -webkit-font-smoothing: antialiased;
-            padding-top: calc(var(--topbar-height) + 1.2rem);
+            padding-top: calc(var(--topbar-height) + 1rem);
         }
 
         .hearts-container {
@@ -67,7 +67,6 @@
             }
         }
 
-        /* ---- 頂欄 ---- */
         .top-bar {
             position: fixed;
             top: 0;
@@ -80,7 +79,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: clamp(6px, 1.5vh, 14px) clamp(1rem, 4vw, 2.5rem);
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
@@ -94,21 +93,22 @@
         }
 
         .top-bar .site-title {
-            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            font-size: clamp(1rem, 4vw, 1.4rem);
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
             flex-shrink: 0;
-            margin-right: clamp(1rem, 4vw, 2.5rem);
+            margin-right: 0.5rem;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .nav-stories {
             display: flex;
-            gap: clamp(8px, 2.5vw, 14px);
+            gap: clamp(6px, 2vw, 12px);
             align-items: center;
             flex-wrap: nowrap;
             flex-shrink: 0;
+            padding: 4px 0; /* 增加垂直内距，避免图标贴边 */
         }
 
         .nav-stories .story-item {
@@ -118,6 +118,7 @@
             cursor: pointer;
             transition: transform 0.2s;
             min-width: 44px;
+            padding: 4px 0;
         }
 
         .nav-stories .story-item:hover {
@@ -125,8 +126,8 @@
         }
 
         .nav-stories .story-ring {
-            width: clamp(36px, 7vw, 46px);
-            height: clamp(36px, 7vw, 46px);
+            width: clamp(44px, 12vw, 50px);  /* 手机端显著增大 */
+            height: clamp(44px, 12vw, 50px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             padding: 2px;
@@ -134,7 +135,7 @@
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,0.5);
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .nav-stories .story-ring i {
@@ -146,24 +147,25 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: clamp(0.75rem, 3vw, 1rem);
+            font-size: clamp(1rem, 5vw, 1.3rem);
         }
 
         .nav-stories .story-label {
-            font-size: clamp(0.5rem, 2vw, 0.7rem);
+            font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+            margin-top: 2px;
             color: white;
+            max-width: 55px;
             text-align: center;
             white-space: nowrap;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* ---- 主要內容 ---- */
         #app {
             position: relative;
             z-index: 1;
-            max-width: 560px;
+            max-width: 520px;
             margin: 0 auto;
-            padding: clamp(0.8rem, 3vw, 1.5rem) clamp(0.8rem, 3vw, 1.5rem) 3rem;
+            padding: clamp(0.5rem, 3vw, 1.5rem) clamp(0.5rem, 3vw, 1rem) 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -193,9 +195,9 @@
         .ins-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: clamp(14px, 3vw, 20px);
+            border-radius: clamp(12px, 3vw, 20px);
             padding: clamp(16px, 5vw, 28px);
-            margin-bottom: clamp(14px, 3vw, 22px);
+            margin-bottom: clamp(12px, 3vw, 24px);
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
@@ -205,19 +207,14 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
         }
 
-        /* 主頁標題（置中 + 一行） */
         #home .animated-text {
-            font-size: clamp(2rem, 7vw, 3.6rem);
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
             font-weight: 600;
             color: var(--accent);
             text-align: center;
-            line-height: 1.2;
+            line-height: 1.4;
             min-height: 4rem;
             margin: 2rem 0 1.5rem;
-            white-space: nowrap;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .animated-text span {
@@ -248,7 +245,7 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: clamp(8px, 2vw, 12px) clamp(18px, 5vw, 26px);
+            padding: clamp(8px, 2vw, 12px) clamp(18px, 5vw, 28px);
             border-radius: 8px;
             font-weight: 500;
             font-size: clamp(0.8rem, 3vw, 1.1rem);
@@ -398,6 +395,7 @@
             position: relative;
         }
 
+        /* 生日卡片响应式高度 */
         .card-container {
             perspective: 1000px;
             width: 100%;
@@ -489,16 +487,17 @@
             border: 1px solid var(--border);
         }
 
-        @media (max-width: 400px) {
+        /* 小屏幕再强化一下图标尺寸和间距 */
+        @media (max-width: 480px) {
             .nav-stories .story-ring {
-                width: 32px;
-                height: 32px;
+                width: clamp(50px, 18vw, 56px);
+                height: clamp(50px, 18vw, 56px);
             }
-            .flip-back p {
-                font-size: 0.65rem;
+            .nav-stories .story-ring i {
+                font-size: clamp(1.2rem, 6vw, 1.5rem);
             }
-            .card-container {
-                height: 480px;
+            .nav-stories {
+                gap: 10px;
             }
         }
     </style>
@@ -599,6 +598,7 @@
         </div>
     </div>
 
+    <!-- 秘密生日卡 -->
     <div id="card" class="page">
         <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
             <div class="card-container" onclick="flipCard()">
