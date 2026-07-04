@@ -19,8 +19,7 @@
             --accent-light: #d4eaf0;
             --border: #e0e0e0;
             --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            /* 使用 clamp 让顶栏高度随屏幕宽度变化 */
-            --topbar-height: clamp(60px, 8vh, 70px);
+            --topbar-height: clamp(60px, 8vh, 75px);
         }
 
         * {
@@ -68,6 +67,7 @@
             }
         }
 
+        /* ---- 頂欄美化 ---- */
         .top-bar {
             position: fixed;
             top: 0;
@@ -80,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 clamp(0.5rem, 2vw, 1rem);
+            padding: 0 clamp(1rem, 4vw, 2rem);
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
@@ -94,21 +94,23 @@
         }
 
         .top-bar .site-title {
-            font-size: clamp(1rem, 4vw, 1.4rem);
+            font-size: clamp(1rem, 4.5vw, 1.5rem);
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
             flex-shrink: 0;
-            margin-right: 1rem;
+            margin-right: clamp(0.8rem, 3vw, 2rem);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
+        /* 導航列 */
         .nav-stories {
             display: flex;
-            gap: 8px;
+            gap: clamp(6px, 2vw, 12px);
             align-items: center;
             flex-wrap: nowrap;
             flex-shrink: 0;
+            padding: 4px 0;
         }
 
         .nav-stories .story-item {
@@ -118,6 +120,7 @@
             cursor: pointer;
             transition: transform 0.2s;
             min-width: 44px;
+            padding: 2px;
         }
 
         .nav-stories .story-item:hover {
@@ -125,8 +128,8 @@
         }
 
         .nav-stories .story-ring {
-            width: clamp(34px, 8vw, 42px);
-            height: clamp(34px, 8vw, 42px);
+            width: clamp(36px, 8vw, 44px);
+            height: clamp(36px, 8vw, 44px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             padding: 2px;
@@ -134,6 +137,7 @@
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 2px;
         }
 
         .nav-stories .story-ring i {
@@ -145,25 +149,25 @@
             align-items: center;
             justify-content: center;
             color: var(--accent);
-            font-size: clamp(0.7rem, 3vw, 1rem);
+            font-size: clamp(0.7rem, 3.5vw, 1rem);
         }
 
         .nav-stories .story-label {
-            font-size: clamp(0.5rem, 2vw, 0.7rem);
-            margin-top: 2px;
+            font-size: clamp(0.5rem, 2.2vw, 0.7rem);
             color: white;
-            max-width: 50px;
             text-align: center;
             white-space: nowrap;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            padding: 0 2px;
         }
 
+        /* ---- 主要內容 ---- */
         #app {
             position: relative;
             z-index: 1;
-            max-width: 520px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: clamp(0.5rem, 3vw, 1.5rem) clamp(0.5rem, 3vw, 1rem) 3rem;
+            padding: clamp(0.8rem, 3vw, 1.5rem) clamp(0.8rem, 3vw, 1.5rem) 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -194,8 +198,8 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: clamp(12px, 3vw, 20px);
-            padding: clamp(16px, 5vw, 28px);
-            margin-bottom: clamp(12px, 3vw, 24px);
+            padding: clamp(16px, 5vw, 30px);
+            margin-bottom: clamp(14px, 3vw, 24px);
             box-shadow: var(--shadow);
             transition: transform 0.2s;
         }
@@ -205,14 +209,18 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
         }
 
+        /* 主頁標題（確保在一行） */
         #home .animated-text {
-            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            font-size: clamp(1.6rem, 6.5vw, 3.5rem);
             font-weight: 600;
             color: var(--accent);
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.2;
             min-height: 4rem;
             margin: 2rem 0 1.5rem;
+            white-space: nowrap;           /* 強制一行 */
+            overflow: visible;
+            text-overflow: clip;
         }
 
         .animated-text span {
@@ -393,7 +401,6 @@
             position: relative;
         }
 
-        /* 生日卡片响应式高度 */
         .card-container {
             perspective: 1000px;
             width: 100%;
@@ -485,8 +492,8 @@
             border: 1px solid var(--border);
         }
 
-        /* 小屏幕微调 */
-        @media (max-width: 400px) {
+        /* 極小螢幕微調 */
+        @media (max-width: 360px) {
             .nav-stories .story-ring {
                 width: 32px;
                 height: 32px;
@@ -495,7 +502,10 @@
                 font-size: 0.65rem;
             }
             .card-container {
-                height: 500px;
+                height: 480px;
+            }
+            #home .animated-text {
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -596,7 +606,6 @@
         </div>
     </div>
 
-    <!-- 秘密生日卡 -->
     <div id="card" class="page">
         <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
             <div class="card-container" onclick="flipCard()">
