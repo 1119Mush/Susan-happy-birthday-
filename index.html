@@ -51,7 +51,7 @@
         .heart {
             position: absolute;
             color: #7db9d0;
-            opacity: 0.25;   /* 透明度降低，更淡 */
+            opacity: 0.25;
             font-size: 20px;
             animation: fall linear infinite;
         }
@@ -392,10 +392,11 @@
             position: relative;
         }
 
+        /* ===== 修改生日卡片样式 ===== */
         .card-container {
             perspective: 1000px;
             width: 100%;
-            height: 320px;
+            height: 380px;   /* 增加高度以容纳长文本 */
             cursor: pointer;
         }
 
@@ -423,7 +424,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .card-front {
@@ -433,17 +434,25 @@
         .card-back {
             background: white;
             transform: rotateY(180deg);
+            justify-content: flex-start;   /* 内容从上开始排列，防止过多文字被挤到中间 */
+            overflow-y: auto;             /* 若文字仍然过多，可以滚动查看 */
         }
 
-        .card-front p,
+        .card-front p {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: white;
+        }
+
         .card-back p {
             font-family: 'Dancing Script', cursive;
-        }
-
-        .card-back p {
+            font-size: 1rem;
+            line-height: 1.6;
             color: #2c3e50;
-            font-size: 2rem;
-            line-height: 1.5;
+            margin: 0.3rem 0;
+            text-align: left;       /* 左对齐更易读 */
+            word-break: break-word;
+            padding: 0 0.5rem;
         }
 
         .music-float {
@@ -484,6 +493,13 @@
             .flip-front,
             .flip-back {
                 padding: 4px;
+            }
+            .card-container {
+                height: 340px;   /* 移动端适当减小高度 */
+            }
+            .card-back p {
+                font-size: 0.85rem;
+                line-height: 1.5;
             }
         }
     </style>
@@ -528,7 +544,7 @@
 
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
-            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🦋 </p>
+            <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
         </div>
 
         <div id="profile" class="page">
@@ -584,20 +600,23 @@
         </div>
     </div>
 
+    <!-- ===== 修改后的秘密生日卡 ===== -->
     <div id="card" class="page">
         <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
             <div class="card-container" onclick="flipCard()">
                 <div class="birthday-card" id="birthdayCard">
                     <div class="card-front">
-                        <p style="font-size: 2.8rem; color: white;">🎂</p>
-                        <p style="font-size: 1.4rem; color: white;">點擊翻轉</p>
+                        <p>🎂</p>
+                        <p style="font-size: 1.4rem;">點擊翻轉</p>
                     </div>
                     <div class="card-back">
-                        <p style="font-size: 2rem; color: #2c3e50;">
-                            親愛的 Susan，<br>
-                            願你的每一天都像今天一樣閃閃發光✨<br>
-                            生日快樂！<br>
-                            --- 愛你的我 💖
+                        <p>
+                            <strong>To Susan,</strong><br><br>
+                            親愛的Block 3科長，生日快樂！！！<br>
+                            這是第二次給你慶祝生日✓ 在這一年中，很高興能夠和你一起發掘更多新的事物，探索各式各樣的地方，也有機會更加了解真實的你。<br><br>
+                            你對我而言是一個很特別的存在，或許這樣說有點抽象，但你的性格感染了我，讓我學會嘗試更加投入當下去感受這個世界的人事物，嘗試不同的事情，以另一個新視角去看待這個世界，謝謝你！<br><br>
+                            願你日日過得稱心自在！新的一歲，盼你繼續成長、尋找到屬於自己的機遇與方向，也能夠嘗試去看看、了解更遠的未來🥰<br><br>
+                            <em>Yanki</em>
                         </p>
                     </div>
                 </div>
