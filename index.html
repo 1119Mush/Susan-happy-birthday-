@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎂Susan 生日快樂</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400..700&display=swap"
+    rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
@@ -13,13 +15,19 @@
             --card-bg: #ffffff;
             --text: #4a4a4a;
             --secondary-text: #8e8e8e;
-            --accent: #c97b84;
-            --accent-light: #f2d5d5;
+            --accent: #8fc0c5;
+            --accent-light: #d0e4e6;
             --border: #e0e0e0;
-            --shadow: 0 1px 4px rgba(0,0,0,0.04);
+            --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
             --topbar-height: 70px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
             background: var(--bg);
@@ -29,23 +37,47 @@
             -webkit-font-smoothing: antialiased;
             padding-top: calc(var(--topbar-height) + 1rem);
         }
+
         .hearts-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
+
         .heart {
-            position: absolute; color: #d4888c; opacity: 0.5; font-size: 20px;
+            position: absolute;
+            color: #8fc0c5;
+            opacity: 0.5;
+            font-size: 20px;
             animation: fall linear infinite;
         }
+
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.7; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
         }
+
         .top-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: var(--topbar-height);
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--topbar-height);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            display: flex; align-items: center;
+            display: flex;
+            align-items: center;
             justify-content: space-between;
             padding: 0 1rem;
             z-index: 10;
@@ -55,7 +87,11 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
-        .top-bar::-webkit-scrollbar { display: none; }
+
+        .top-bar::-webkit-scrollbar {
+            display: none;
+        }
+
         .top-bar .site-title {
             font-size: 1.2rem;
             font-weight: 500;
@@ -64,6 +100,7 @@
             flex-shrink: 0;
             margin-right: 1rem;
         }
+
         .nav-stories {
             display: flex;
             gap: 8px;
@@ -71,6 +108,7 @@
             flex-wrap: nowrap;
             flex-shrink: 0;
         }
+
         .nav-stories .story-item {
             display: flex;
             flex-direction: column;
@@ -79,17 +117,22 @@
             transition: transform 0.2s;
             min-width: 44px;
         }
-        .nav-stories .story-item:hover { transform: scale(1.05); }
+
+        .nav-stories .story-item:hover {
+            transform: scale(1.05);
+        }
+
         .nav-stories .story-ring {
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #e0b0af, #d4a0a0);
+            background: linear-gradient(135deg, #b8d4d8, #a0c4c9);
             padding: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .nav-stories .story-ring i {
             width: 100%;
             height: 100%;
@@ -101,6 +144,7 @@
             color: var(--accent);
             font-size: 0.9rem;
         }
+
         .nav-stories .story-label {
             font-size: 0.6rem;
             margin-top: 2px;
@@ -109,53 +153,165 @@
             text-align: center;
             white-space: nowrap;
         }
+
         #app {
-            position: relative; z-index: 1; max-width: 520px; margin: 0 auto;
-            padding: 1rem 1rem 3rem; display: flex; flex-direction: column; align-items: center;
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 1rem 1rem 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .page { display: none; width: 100%; animation: fadeIn 0.5s ease; }
-        .page.active { display: block; }
+
+        .page {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .ins-card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
-            padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); transition: transform 0.2s;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
         }
-        .ins-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.05); }
+
+        .ins-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+        }
+
         #home .animated-text {
-            font-size: 2.8rem; font-weight: 600; color: var(--accent); text-align: center;
-            line-height: 1.4; min-height: 4rem; margin: 2rem 0 1.5rem;
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-align: center;
+            line-height: 1.4;
+            min-height: 4rem;
+            margin: 2rem 0 1.5rem;
         }
-        .animated-text span { display: inline-block; opacity: 0; animation: bounceIn 0.6s ease forwards; }
+
+        .animated-text span {
+            display: inline-block;
+            opacity: 0;
+            animation: bounceIn 0.6s ease forwards;
+        }
+
         @keyframes bounceIn {
-            0% { opacity: 0; transform: scale(0.3) translateY(40px); }
-            50% { opacity: 1; transform: scale(1.1) translateY(-10px); }
-            70% { transform: scale(0.9) translateY(5px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(40px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) translateY(-10px);
+            }
+            70% {
+                transform: scale(0.9) translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
-        .ins-btn { background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 500; font-size: 1rem; cursor: pointer; transition: background 0.2s, transform 0.1s; }
-        .ins-btn:active { transform: scale(0.96); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 30; backdrop-filter: blur(4px); }
-        .modal { background: white; border-radius: 20px; padding: 2rem; max-width: 320px; width: 90%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        .modal input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; margin: 1rem 0; outline: none; }
-        .modal input:focus { border-color: var(--accent); }
-        .error-msg { color: #e74c3c; font-size: 0.9rem; margin-top: 8px; }
+
+        .ins-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .ins-btn:active {
+            transform: scale(0.96);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin: 1rem 0;
+            outline: none;
+        }
+
+        .modal input:focus {
+            border-color: var(--accent);
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
         .flip-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin: 1rem 0;
         }
+
         .flip-container {
             perspective: 800px;
             aspect-ratio: 1;
             cursor: pointer;
         }
+
         .flip-container.used {
             cursor: default;
         }
+
         .flip-inner {
             position: relative;
             width: 100%;
@@ -163,10 +319,13 @@
             transition: transform 0.6s;
             transform-style: preserve-3d;
         }
+
         .flip-container.flipped .flip-inner {
             transform: rotateY(180deg);
         }
-        .flip-front, .flip-back {
+
+        .flip-front,
+        .flip-back {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -177,13 +336,15 @@
             align-items: center;
             justify-content: center;
             padding: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border);
         }
+
         .flip-front {
-            background: linear-gradient(135deg, #f8e8e8, #f2d5d5);
+            background: linear-gradient(135deg, #eaf3f3, #dce8ea);
             font-size: 2rem;
         }
+
         .flip-back {
             background: white;
             transform: rotateY(180deg);
@@ -193,48 +354,132 @@
             line-height: 1.5;
             word-break: break-word;
         }
+
         .flip-back p {
             font-family: 'Dancing Script', cursive;
             font-size: 1rem;
-            color: #5d4a4a;
+            color: #4a6a6a;
         }
+
         .flip-container.used .flip-front {
             opacity: 0.5;
         }
+
         .wechat-notice {
-            background: #fff3f3;
-            border: 1px solid #ffcdd2;
+            background: #f0f8f8;
+            border: 1px solid #c8dce0;
             border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 1rem;
             font-size: 0.85rem;
-            color: #b71c1c;
+            color: #3a7a7a;
             text-align: center;
         }
-        .wechat-notice i { margin-right: 4px; }
+
+        .wechat-notice i {
+            margin-right: 4px;
+        }
+
         #cusdis_thread {
             min-height: 380px;
             width: 100%;
             position: relative;
         }
-        .card-container { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; }
-        .birthday-card { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
-        .birthday-card.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-        .card-front { background: linear-gradient(145deg, #e6c7c7, #f2d5d5); }
-        .card-back { background: white; transform: rotateY(180deg); }
-        .card-front p, .card-back p { font-family: 'Dancing Script', cursive; }
-        .music-float { position: fixed; bottom: 24px; right: 24px; background: white; border-radius: 50%; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; z-index: 15; font-size: 1.2rem; color: var(--accent); border: 1px solid var(--border); }
+
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 320px;
+            cursor: pointer;
+        }
+
+        .birthday-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .birthday-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, #d0e2e4, #dce8ea);
+        }
+
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-front p,
+        .card-back p {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .card-back p {
+            color: #4a6a6a;
+            font-size: 2rem;
+        }
+
+        .music-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 15;
+            font-size: 1.2rem;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
         @media (max-width: 500px) {
-            .top-bar .site-title { font-size: 1rem; }
-            #home .animated-text { font-size: 2.2rem; }
-            #cusdis_thread { min-height: 280px; }
-            .flip-grid { gap: 6px; }
-            .flip-back p { font-size: 0.85rem; }
+            .top-bar .site-title {
+                font-size: 1rem;
+            }
+            #home .animated-text {
+                font-size: 2.2rem;
+            }
+            #cusdis_thread {
+                min-height: 280px;
+            }
+            .flip-grid {
+                gap: 6px;
+            }
+            .flip-back p {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
+
 <body>
+
     <div class="hearts-container" id="heartsContainer"></div>
 
     <header class="top-bar">
@@ -264,9 +509,12 @@
     </header>
 
     <div class="music-float" id="musicControl" onclick="toggleMusic()" title="生日歌">🎵</div>
-    <audio id="bgMusic" loop><source src="nastelbom-happy-birthday-471481.mp3" type="audio/mpeg"></audio>
+    <audio id="bgMusic" loop>
+        <source src="nastelbom-happy-birthday-471481.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="app">
+
         <div id="home" class="page active">
             <div class="animated-text" id="animatedText"></div>
             <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-top: 1rem;">點擊上方圖標探索更多 🎀</p>
@@ -281,31 +529,31 @@
                     <p><strong>生日：</strong>7月6日</p>
                     <p><strong>星座：</strong>巨蟹座</p>
                     <p><strong>興趣：</strong>待輸入</p>
-                    <p style="margin-top:1rem;">「願妳青春燦爛,未來無憂」</p>
+                    <p style="margin-top:1rem;">「願妳青春燦爛，未來無憂」</p>
                 </div>
             </div>
         </div>
 
         <div id="mystery" class="page">
             <div class="ins-card">
-                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 密碼兌換抽獎</h3>
+                <h3 style="font-weight: 500; margin-bottom: 0.5rem;">✨ 兌換抽獎</h3>
                 <p style="color: var(--secondary-text); font-size: 0.85rem; text-align: center; margin-bottom: 1rem;">
-                    輸入密碼後，自己點選一張卡片翻開 💖
+                    輸入兌換碼後，點選一張卡片翻開 💖
                 </p>
                 <div style="display:flex; gap:8px; margin-bottom: 1rem; justify-content:center;">
-                    <input type="password" id="rafflePwdInput" placeholder="輸入抽獎密碼" maxlength="20" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:20px; font-size:0.9rem;">
-                    <button class="ins-btn" onclick="submitCode()">驗證密碼</button>
+                    <input type="password" id="rafflePwdInput" placeholder="輸入抽獎碼" maxlength="20" style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:20px; font-size:0.9rem;">
+                    <button class="ins-btn" onclick="submitCode()">驗證</button>
                 </div>
                 <p class="error-msg" id="raffleError"></p>
                 <p style="color: var(--secondary-text); font-size: 0.8rem; text-align: center; margin-bottom: 0.5rem;" id="pickHint" hidden>請點擊一張卡片翻開它</p>
                 <div class="flip-grid" id="flipGrid">
-                    <p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 載入中…</p>
+                    <p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 載入中...</p>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                     <p style="color: var(--secondary-text); font-size: 0.8rem; margin: 0;">
-                        剩餘可抽次數：<strong id="remainingCount">…</strong>
+                        剩餘可抽次數：<strong id="remainingCount">...</strong>
                     </p>
-                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新同步</button>
+                    <button class="ins-btn" onclick="loadMysteryCards()" style="font-size:0.8rem; padding:6px 12px;">🔄 刷新</button>
                 </div>
             </div>
         </div>
@@ -317,347 +565,347 @@
                     <i class="fas fa-exclamation-circle"></i> 若無法留言，請用 <strong>Safari / Chrome</strong> 開啟本頁面 💌
                 </div>
                 <div id="cusdis_thread"
-                     data-host="https://cusdis.com"
-                     data-app-id="6553cb70-9b01-42d6-a6ac-7daa68ba38fb"
-                     data-page-id="susan-birthday"
-                     data-page-title="Susan 的生日祝福牆">
-                </div>
+                data-host="https://cusdis.com"
+                data-app-id="6553cb70-9b01-42d6-a6ac-7daa68ba38fb"
+                data-page-id="susan-birthday"
+                data-page-title="Susan 的生日祝福牆">
             </div>
         </div>
+    </div>
 
-        <div id="card" class="page">
-            <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
-                <div class="card-container" onclick="flipCard()">
-                    <div class="birthday-card" id="birthdayCard">
-                        <div class="card-front">
-                            <p style="font-size: 2.8rem; color: white;">🎂</p>
-                            <p style="font-size: 1.4rem; color: white;">點擊翻轉</p>
-                        </div>
-                        <div class="card-back">
-                            <p style="font-size: 2rem; color: #5d4a4a;">
-                                親愛的 Susan，<br>
-                                願你的每一天都像今天一樣閃閃發光✨<br>
-                                生日快樂！<br>
-                                — 愛你的我 💖
-                            </p>
-                        </div>
+    <div id="card" class="page">
+        <div class="ins-card" style="background:transparent; border:none; box-shadow:none; padding:0;">
+            <div class="card-container" onclick="flipCard()">
+                <div class="birthday-card" id="birthdayCard">
+                    <div class="card-front">
+                        <p style="font-size: 2.8rem; color: white;">🎂</p>
+                        <p style="font-size: 1.4rem; color: white;">點擊翻轉</p>
+                    </div>
+                    <div class="card-back">
+                        <p style="font-size: 2rem; color: #4a6a6a;">
+                            親愛的 Susan，<br>
+                            願你的每一天都像今天一樣閃閃發光✨<br>
+                            生日快樂！<br>
+                            --- 愛你的我 💖
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="passwordModal" style="display: none;">
-        <div class="modal">
-            <h3>🔐 輸入密碼打開卡片</h3>
-            <input type="password" id="pwdInput" placeholder="輸入密碼" maxlength="6">
-            <button class="ins-btn" onclick="checkPassword()">解鎖</button>
-            <p class="error-msg" id="pwdError"></p>
-        </div>
+</div>
+
+<div class="modal-overlay" id="passwordModal" style="display: none;">
+    <div class="modal">
+        <h3>🔐 輸入密碼打開卡片</h3>
+        <input type="password" id="pwdInput" placeholder="輸入密碼" maxlength="6">
+        <button class="ins-btn" onclick="checkPassword()">解鎖</button>
+        <p class="error-msg" id="pwdError"></p>
     </div>
+</div>
 
-    <script src="https://cusdis.com/js/cusdis.es.js"></script>
-    <script>
-        const WORKER_URL = "https://sue.by-yanki.workers.dev";
-        const raffleCodes = ["SUSAN0706", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
-        const mysteryCards = [
-            { front: "🎁", back: "第一份禮物：<br>請 Susan 喝一杯<br>你最愛的珍珠奶茶！" },
-            { front: "🌟", back: "幸運星降臨：<br>今天會發生一件<br>讓你超開心的小事！" },
-            { front: "🎵", back: "專屬點歌：<br>為你點播一首<br>〈生日快樂〉<br>願旋律帶走所有煩惱" },
-            { front: "💌", back: "好友悄悄話：<br>認識你是大學<br>最幸運的事，<br>謝謝你一直以來的陪伴" },
-            { front: "✨", back: "願望成真卡：<br>對這張卡許願，<br>它會幫你把心願<br>偷偷告訴宇宙 ✨" },
-            { front: "🌸", back: "幸福預言：<br>接下來的每一天，<br>你都會被<br>小小的幸福圍繞" }
-        ];
+<script src="https://cusdis.com/js/cusdis.es.js"></script>
+<script>
+    const WORKER_URL = "https://sue.by-yanki.workers.dev";
+    const raffleCodes = ["202676", "BIRTHDAY", "HAPPY", "LOVEU", "SURPRISE", "CAKE"];
+    const mysteryCards = [
+        { front: "🎁", back: "神秘禮物一：<br>任選一杯奶茶！<br>隨時可用" },
+        { front: "🎁", back: "神秘禮物二：<br>神秘紅包一個！" },
+        { front: "🎁", back: "神秘禮物三：<br>周邊代付卷✓<br>隨時可用" },
+        { front: "🎁", back: "神秘禮物四：<br>精選零食" },
+        { front: "🎁", back: "神秘禮物五：<br>神秘掛件<br>這個過幾天給😋" },
+        { front: "🎁", back: "神秘禮物六：<br>蛋糕一件<br>隨時可用" }
+    ];
 
-        // 全域狀態
-        let usedCodes = [];
-        let openedCards = [];
-        let pendingCodeIndex = -1;
+    let usedCodes = [];
+    let openedCards = [];
+    let pendingCodeIndex = -1;
 
-        // Cusdis 高度處理
-        document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
-        function adjustCusdisHeight() {
-            const thread = document.getElementById('cusdis_thread');
-            if (!thread) return;
-            const iframe = thread.querySelector('iframe');
-            if (iframe) {
-                iframe.style.height = '100%';
-                const containerHeight = thread.clientHeight;
-                if (containerHeight > 0) iframe.style.height = containerHeight + 'px';
-            }
+    document.getElementById('cusdis_thread').setAttribute('data-page-url', window.location.href);
+
+    function adjustCusdisHeight() {
+        const thread = document.getElementById('cusdis_thread');
+        if (!thread) return;
+        const iframe = thread.querySelector('iframe');
+        if (iframe) {
+            iframe.style.height = '100%';
+            const containerHeight = thread.clientHeight;
+            if (containerHeight > 0) iframe.style.height = containerHeight + 'px';
         }
-        const cusdisObserver = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-                if (mutation.addedNodes.length > 0) {
-                    const iframe = document.getElementById('cusdis_thread')?.querySelector('iframe');
-                    if (iframe) {
-                        adjustCusdisHeight();
-                        setTimeout(adjustCusdisHeight, 300);
-                        setTimeout(adjustCusdisHeight, 1000);
-                        cusdisObserver.disconnect();
-                        return;
-                    }
+    }
+
+    const cusdisObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.addedNodes.length > 0) {
+                const iframe = document.getElementById('cusdis_thread')?.querySelector('iframe');
+                if (iframe) {
+                    adjustCusdisHeight();
+                    setTimeout(adjustCusdisHeight, 300);
+                    setTimeout(adjustCusdisHeight, 1000);
+                    cusdisObserver.disconnect();
+                    return;
                 }
             }
+        }
+    });
+
+    function startObservingCusdis() {
+        const thread = document.getElementById('cusdis_thread');
+        if (thread) cusdisObserver.observe(thread, { childList: true, subtree: true });
+    }
+
+    function onWishesPageActive() {
+        const thread = document.getElementById('cusdis_thread');
+        if (thread && !thread.querySelector('iframe')) startObservingCusdis();
+        adjustCusdisHeight();
+        setTimeout(adjustCusdisHeight, 300);
+        setTimeout(adjustCusdisHeight, 1000);
+    }
+
+    async function loadRaffleData() {
+        try {
+            const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            usedCodes = Array.isArray(data.usedCodes) ? data.usedCodes : [];
+            openedCards = Array.isArray(data.openedCards) ? data.openedCards : [];
+            return true;
+        } catch (e) {
+            console.error('讀取失敗:', e);
+            return false;
+        }
+    }
+
+    async function saveOperation(useCode, openCard) {
+        const res = await fetch(`${WORKER_URL}/save`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ useCode, openCard })
         });
-        function startObservingCusdis() {
-            const thread = document.getElementById('cusdis_thread');
-            if (thread) cusdisObserver.observe(thread, { childList: true, subtree: true });
-        }
-        function onWishesPageActive() {
-            const thread = document.getElementById('cusdis_thread');
-            if (thread && !thread.querySelector('iframe')) startObservingCusdis();
-            adjustCusdisHeight();
-            setTimeout(adjustCusdisHeight, 300);
-            setTimeout(adjustCusdisHeight, 1000);
-        }
+        const result = await res.json();
+        if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
+    }
 
-        // 讀取抽獎資料
-        async function loadRaffleData() {
-            try {
-                const res = await fetch(`${WORKER_URL}/read?t=${Date.now()}`, { cache: 'no-store' });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-                usedCodes = Array.isArray(data.usedCodes) ? data.usedCodes : [];
-                openedCards = Array.isArray(data.openedCards) ? data.openedCards : [];
-                return true;
-            } catch (e) {
-                console.error('讀取失敗:', e);
-                return false;
-            }
-        }
+    function updateRemainingDisplay() {
+        const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
+        document.getElementById('remainingCount').textContent = remaining >= 0 ? remaining : 0;
+    }
 
-        // 儲存增量
-        async function saveOperation(useCode, openCard) {
-            const res = await fetch(`${WORKER_URL}/save`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ useCode, openCard })
-            });
-            const result = await res.json();
-            if (!res.ok || result.error) throw new Error(result.error || '儲存失敗');
-        }
+    function renderCards() {
+        const grid = document.getElementById('flipGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
 
-        // 更新剩餘次數
-        function updateRemainingDisplay() {
-            const remaining = Math.min(6 - usedCodes.length, 6 - openedCards.length);
-            document.getElementById('remainingCount').textContent = remaining >= 0 ? remaining : 0;
-        }
+        mysteryCards.forEach((card, idx) => {
+            const container = document.createElement('div');
+            container.className = 'flip-container';
+            container.dataset.cardIndex = idx;
 
-        // 渲染卡片
-        function renderCards() {
-            const grid = document.getElementById('flipGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            mysteryCards.forEach((card, idx) => {
-                const container = document.createElement('div');
-                container.className = 'flip-container';
-                container.dataset.cardIndex = idx;
-
-                if (openedCards.includes(idx)) {
-                    container.classList.add('flipped', 'used');
-                    container.innerHTML = `
+            if (openedCards.includes(idx)) {
+                container.classList.add('flipped', 'used');
+                container.innerHTML = `
                         <div class="flip-inner">
                             <div class="flip-front">${card.front}</div>
                             <div class="flip-back"><p>${card.back}</p></div>
                         </div>
                     `;
-                } else if (pendingCodeIndex >= 0) {
-                    container.innerHTML = `
+            } else if (pendingCodeIndex >= 0) {
+                container.innerHTML = `
                         <div class="flip-inner">
                             <div class="flip-front">${card.front}</div>
                             <div class="flip-back"><p>${card.back}</p></div>
                         </div>
                     `;
-                    container.onclick = () => pickCard(idx);
-                } else {
-                    container.innerHTML = `
-                        <div class="flip-inner">
-                            <div class="flip-front">${card.front}</div>
-                            <div class="flip-back"><p>${card.back}</p></div>
-                        </div>
-                    `;
-                }
-                grid.appendChild(container);
-            });
-            updateRemainingDisplay();
-        }
-
-        // 進入抽獎頁
-        async function loadMysteryCards() {
-            const grid = document.getElementById('flipGrid');
-            if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 連線中…</p>';
-            const ok = await loadRaffleData();
-            if (ok) {
-                pendingCodeIndex = -1;
-                document.getElementById('pickHint').hidden = true;
-                renderCards();
+                container.onclick = () => pickCard(idx);
             } else {
-                if (grid) grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">⚠️ 讀取失敗，請點擊「刷新同步」重試</p>';
+                container.innerHTML = `
+                        <div class="flip-inner">
+                            <div class="flip-front">${card.front}</div>
+                            <div class="flip-back"><p>${card.back}</p></div>
+                        </div>
+                    `;
             }
-        }
+            grid.appendChild(container);
+        });
 
-        // 驗證密碼
-        async function submitCode() {
-            await loadRaffleData();
-            const input = document.getElementById('rafflePwdInput');
-            const errorEl = document.getElementById('raffleError');
-            const code = input.value.trim();
-            errorEl.textContent = '';
+        updateRemainingDisplay();
+    }
 
-            if (!code) { errorEl.textContent = '請輸入密碼'; return; }
-            const idx = raffleCodes.indexOf(code);
-            if (idx === -1) { errorEl.textContent = '密碼無效'; return; }
-            if (usedCodes.includes(idx)) { errorEl.textContent = '密碼已被使用'; return; }
-            if (openedCards.length >= 6) { errorEl.textContent = '卡片已全開'; return; }
+    async function loadMysteryCards() {
+        const grid = document.getElementById('flipGrid');
+        if (grid) grid.innerHTML = '<p style="color: var(--secondary-text); text-align: center; width: 100%;">🔄 連線中...</p>';
 
-            pendingCodeIndex = idx;
-            input.value = '';
-            document.getElementById('pickHint').hidden = false;
-            renderCards();
-        }
-
-        // 選擇卡片
-        async function pickCard(cardIdx) {
-            if (pendingCodeIndex < 0) return;
-            if (openedCards.includes(cardIdx)) return;
-            const errorEl = document.getElementById('raffleError');
-
-            try {
-                await saveOperation(pendingCodeIndex, cardIdx);
-            } catch (e) {
-                errorEl.textContent = '儲存失敗: ' + e.message;
-                return;
-            }
-
-            await loadRaffleData();
+        const ok = await loadRaffleData();
+        if (ok) {
             pendingCodeIndex = -1;
             document.getElementById('pickHint').hidden = true;
             renderCards();
+        } else {
+            if (grid) grid.innerHTML = '<p style="color:#e74c3c; text-align:center;">⚠️ 讀取失敗，請點擊「刷新同步」重試</p>';
+        }
+    }
 
-            const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
-            if (card) {
-                card.classList.add('flipped', 'used');
-                card.onclick = null;
-                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
-            }
+    async function submitCode() {
+        await loadRaffleData();
+        const input = document.getElementById('rafflePwdInput');
+        const errorEl = document.getElementById('raffleError');
+        const code = input.value.trim();
+        errorEl.textContent = '';
 
-            if (openedCards.length === 6) {
-                setTimeout(() => {
-                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                    alert('🎉 恭喜！所有神秘小卡都已被揭曉！');
-                }, 500);
-            }
+        if (!code) { errorEl.textContent = '請輸入密碼'; return; }
+        const idx = raffleCodes.indexOf(code);
+        if (idx === -1) { errorEl.textContent = '密碼無效'; return; }
+        if (usedCodes.includes(idx)) { errorEl.textContent = '密碼已被使用'; return; }
+        if (openedCards.length >= 6) { errorEl.textContent = '卡片已全開'; return; }
+
+        pendingCodeIndex = idx;
+        input.value = '';
+        document.getElementById('pickHint').hidden = false;
+        renderCards();
+    }
+
+    async function pickCard(cardIdx) {
+        if (pendingCodeIndex < 0) return;
+        if (openedCards.includes(cardIdx)) return;
+
+        const errorEl = document.getElementById('raffleError');
+        try {
+            await saveOperation(pendingCodeIndex, cardIdx);
+        } catch (e) {
+            errorEl.textContent = '儲存失敗: ' + e.message;
+            return;
         }
 
-        // 頁面切換
-        const originalShowPage = showPage;
-        showPage = function(pageId) {
-            originalShowPage(pageId);
-            if (pageId === 'wishes') onWishesPageActive();
-            if (pageId === 'mystery') loadMysteryCards();
-        };
+        await loadRaffleData();
+        pendingCodeIndex = -1;
+        document.getElementById('pickHint').hidden = true;
+        renderCards();
 
-        // 其他功能
-        const correctPassword = "201076";
-        let passwordVerified = false;
-
-        function createHearts() {
-            const container = document.getElementById('heartsContainer');
-            const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
-            for (let i = 0; i < 40; i++) {
-                const heart = document.createElement('span');
-                heart.className = 'heart';
-                heart.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
-                heart.style.animationDelay = Math.random() * 5 + 's';
-                heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
-                container.appendChild(heart);
-            }
-        }
-        createHearts();
-
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            if (pageId === 'home') startTextAnimation();
-            if (pageId === 'mystery') loadMysteryCards();
+        const card = document.querySelector(`.flip-container[data-card-index="${cardIdx}"]`);
+        if (card) {
+            card.classList.add('flipped', 'used');
+            card.onclick = null;
+            confetti({ particleCount: 40, spread: 50, origin: { y: 0.7, x: 0.5 } });
         }
 
-        function startTextAnimation() {
-            const container = document.getElementById('animatedText');
-            if (!container) return;
-            const message = "Susan, Happy Birthday!";
-            container.innerHTML = '';
-            [...message].forEach((char, index) => {
-                const span = document.createElement('span');
-                span.textContent = char;
-                span.style.animationDelay = (index * 0.12) + 's';
-                container.appendChild(span);
-            });
-            const totalDuration = (message.length * 0.12 + 0.6) * 1000;
+        if (openedCards.length === 6) {
             setTimeout(() => {
-                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-            }, totalDuration);
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                alert('🎉 恭喜！所有神秘小卡都已被揭曉！');
+            }, 500);
         }
+    }
 
-        function showCardWithPassword() {
-            if (passwordVerified) showPage('card');
-            else {
-                document.getElementById('passwordModal').style.display = 'flex';
-                document.getElementById('pwdInput').value = '';
-                document.getElementById('pwdError').textContent = '';
-            }
+    const originalShowPage = showPage;
+    showPage = function(pageId) {
+        originalShowPage(pageId);
+        if (pageId === 'wishes') onWishesPageActive();
+        if (pageId === 'mystery') loadMysteryCards();
+    };
+
+    const correctPassword = "201076";
+    let passwordVerified = false;
+
+    function createHearts() {
+        const container = document.getElementById('heartsContainer');
+        const heartChars = ['🌹', '🌸', '✨', '💖', '🍄'];
+        for (let i = 0; i < 40; i++) {
+            const heart = document.createElement('span');
+            heart.className = 'heart';
+            heart.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
+            container.appendChild(heart);
         }
+    }
+    createHearts();
 
-        function checkPassword() {
-            if (document.getElementById('pwdInput').value.trim() === correctPassword) {
-                passwordVerified = true;
-                document.getElementById('passwordModal').style.display = 'none';
-                showPage('card');
-            } else {
-                document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
-            }
-        }
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if (pageId === 'home') startTextAnimation();
+        if (pageId === 'mystery') loadMysteryCards();
+    }
 
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) this.style.display = 'none';
+    function startTextAnimation() {
+        const container = document.getElementById('animatedText');
+        if (!container) return;
+        const message = "Susan, Happy Birthday!";
+        container.innerHTML = '';
+        [...message].forEach((char, index) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.animationDelay = (index * 0.12) + 's';
+            container.appendChild(span);
         });
+        const totalDuration = (message.length * 0.12 + 0.6) * 1000;
+        setTimeout(() => {
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+        }, totalDuration);
+    }
 
-        function flipCard() {
-            document.getElementById('birthdayCard').classList.toggle('flipped');
+    function showCardWithPassword() {
+        if (passwordVerified) showPage('card');
+        else {
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('pwdInput').value = '';
+            document.getElementById('pwdError').textContent = '';
         }
+    }
 
-        const bgMusic = document.getElementById('bgMusic');
-        let musicPlaying = false;
-        function toggleMusic() {
-            if (musicPlaying) {
-                bgMusic.pause();
-                document.getElementById('musicControl').textContent = '🎵';
-            } else {
-                bgMusic.play().catch(() => {});
+    function checkPassword() {
+        if (document.getElementById('pwdInput').value.trim() === correctPassword) {
+            passwordVerified = true;
+            document.getElementById('passwordModal').style.display = 'none';
+            showPage('card');
+        } else {
+            document.getElementById('pwdError').textContent = '密碼不對，再試一次～';
+        }
+    }
+
+    document.getElementById('passwordModal').addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+    });
+
+    function flipCard() {
+        document.getElementById('birthdayCard').classList.toggle('flipped');
+    }
+
+    const bgMusic = document.getElementById('bgMusic');
+    let musicPlaying = false;
+
+    function toggleMusic() {
+        if (musicPlaying) {
+            bgMusic.pause();
+            document.getElementById('musicControl').textContent = '🎵';
+        } else {
+            bgMusic.play().catch(() => {});
+            document.getElementById('musicControl').textContent = '🎶';
+        }
+        musicPlaying = !musicPlaying;
+    }
+
+    document.body.addEventListener('click', function initAudio() {
+        if (!musicPlaying) {
+            bgMusic.play().then(() => {
+                musicPlaying = true;
                 document.getElementById('musicControl').textContent = '🎶';
-            }
-            musicPlaying = !musicPlaying;
+            }).catch(() => {});
         }
-        document.body.addEventListener('click', function initAudio() {
-            if (!musicPlaying) {
-                bgMusic.play().then(() => {
-                    musicPlaying = true;
-                    document.getElementById('musicControl').textContent = '🎶';
-                }).catch(() => {});
-            }
-        }, { once: true });
+    }, { once: true });
 
-        // 初始化
-        window.addEventListener('load', () => {
-            startTextAnimation();
-            startObservingCusdis();
-            adjustCusdisHeight();
-            setTimeout(adjustCusdisHeight, 500);
-            setTimeout(adjustCusdisHeight, 1500);
-        });
-    </script>
+    window.addEventListener('load', () => {
+        startTextAnimation();
+        startObservingCusdis();
+        adjustCusdisHeight();
+        setTimeout(adjustCusdisHeight, 500);
+        setTimeout(adjustCusdisHeight, 1500);
+    });
+</script>
+
 </body>
+
 </html>
